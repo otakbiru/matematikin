@@ -1,0 +1,3721 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dokumentasi Resmi matematikin.js (v0.0.1 beta) — Pustaka Komputasi Matematika & Generator Soal Indonesia
+  </title>
+
+  <!-- KaTeX untuk merender output LaTeX (pecahan, matriks, akar, persamaan garis) secara live -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" crossorigin="anonymous">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+    crossorigin="anonymous"></script>
+
+  <!-- QRCode.js untuk mendukung demo live fungsi buattabelsoal() -->
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+  <style>
+    :root {
+      --bg-body: #ffffff;
+      --bg-sidebar: #f8fafc;
+      --bg-card: #ffffff;
+      --bg-subtle: #f1f5f9;
+      --border: #e2e8f0;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --primary-light: #eff6ff;
+      --text-main: #0f172a;
+      --text-secondary: #475569;
+      --text-muted: #64748b;
+      --code-bg: #0f172a;
+      --code-text: #f8fafc;
+      --accent-green: #16a34a;
+      --accent-amber: #d97706;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      color: var(--text-main);
+      background: var(--bg-body);
+      display: flex;
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+
+    /* ================= SIDEBAR KIRI ================= */
+    .sidebar {
+      width: 320px;
+      background: var(--bg-sidebar);
+      border-right: 1px solid var(--border);
+      height: 100vh;
+      position: sticky;
+      top: 0;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      user-select: none;
+    }
+
+    .sidebar-header {
+      padding: 1.25rem 1rem 0.9rem;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-sidebar);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .brand-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--primary);
+      text-decoration: none;
+      letter-spacing: -0.02em;
+    }
+
+    .badge-beta {
+      background: #fef3c7;
+      color: #b45309;
+      border: 1px solid #fde68a;
+      font-size: 0.68rem;
+      font-weight: 700;
+      padding: 0.12rem 0.5rem;
+      border-radius: 99px;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .brand-sub {
+      font-size: 0.76rem;
+      color: var(--text-muted);
+      margin-bottom: 0.85rem;
+    }
+
+    .search-wrapper {
+      position: relative;
+    }
+
+    .search-box {
+      width: 100%;
+      padding: 0.55rem 0.75rem 0.55rem 2.1rem;
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      font-size: 0.86rem;
+      background: #fff;
+      color: var(--text-main);
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+
+    .search-box:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 0.65rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      pointer-events: none;
+    }
+
+    .sidebar-nav {
+      padding: 1rem 0.85rem 2rem;
+      flex: 1;
+    }
+
+    .nav-group {
+      margin-bottom: 1.15rem;
+    }
+
+    .nav-cat-link {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-secondary);
+      text-decoration: none;
+      padding: 0.4rem 0.55rem;
+      border-radius: 6px;
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .nav-cat-link:hover,
+    .nav-cat-link.active {
+      color: var(--primary);
+      background: var(--primary-light);
+    }
+
+    .cat-count {
+      background: #e2e8f0;
+      color: var(--text-secondary);
+      font-size: 0.68rem;
+      padding: 0.05rem 0.42rem;
+      border-radius: 99px;
+      font-weight: 600;
+    }
+
+    .nav-items {
+      list-style: none;
+      margin-top: 0.2rem;
+      padding-left: 0.45rem;
+      border-left: 2px solid var(--border);
+      margin-left: 0.55rem;
+    }
+
+    .nav-item a {
+      display: block;
+      padding: 0.26rem 0.6rem;
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 0.83rem;
+      border-radius: 5px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      transition: all 0.12s;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .nav-item a.text-link {
+      font-family: inherit;
+      font-weight: 500;
+    }
+
+    .nav-item a:hover {
+      background: var(--bg-subtle);
+      color: var(--text-main);
+    }
+
+    .nav-item a.active {
+      background: var(--primary);
+      color: #ffffff;
+      font-weight: 600;
+    }
+
+    /* ================= AREA KONTEN UTAMA ================= */
+    .main-wrapper {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .topbar-mobile {
+      display: none;
+      padding: 0.85rem 1.25rem;
+      background: var(--bg-sidebar);
+      border-bottom: 1px solid var(--border);
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 20;
+    }
+
+    .menu-btn {
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      padding: 0.4rem 0.75rem;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .content {
+      padding: 2.5rem 3.25rem 4rem;
+      max-width: 1080px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    .breadcrumb {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: var(--primary-light);
+      color: var(--primary);
+      padding: 0.25rem 0.75rem;
+      border-radius: 99px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-bottom: 0.85rem;
+      text-decoration: none;
+    }
+
+    .breadcrumb:hover {
+      background: #dbeafe;
+    }
+
+    h1 {
+      font-size: 2.1rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.6rem;
+      color: var(--text-main);
+    }
+
+    .lead {
+      font-size: 1.05rem;
+      color: var(--text-secondary);
+      margin-bottom: 1.5rem;
+    }
+
+    h2 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin: 2.2rem 0 0.85rem;
+      padding-bottom: 0.45rem;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    h3 {
+      font-size: 1.05rem;
+      font-weight: 600;
+      margin: 1.25rem 0 0.5rem;
+    }
+
+    p {
+      margin-bottom: 0.9rem;
+      color: var(--text-secondary);
+    }
+
+    /* BLOK KODE & TABEL */
+    pre {
+      background: var(--code-bg);
+      color: var(--code-text);
+      padding: 1rem 1.2rem;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-size: 0.86rem;
+      margin-bottom: 1.25rem;
+      line-height: 1.55;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      border: 1px solid #1e293b;
+    }
+
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      background: var(--bg-subtle);
+      color: #be185d;
+      padding: 0.15rem 0.4rem;
+      border-radius: 4px;
+      font-size: 0.86em;
+    }
+
+    pre code {
+      background: none;
+      color: inherit;
+      padding: 0;
+      font-size: inherit;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      margin-bottom: 1.5rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+    }
+
+    th,
+    td {
+      text-align: left;
+      padding: 0.65rem 0.9rem;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    th {
+      background: var(--bg-sidebar);
+      font-weight: 600;
+      color: var(--text-main);
+      white-space: nowrap;
+    }
+
+    /* KOTAK CONTOH INTERAKTIF & HASIL CONTOH */
+    .demo-container {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 1.25rem;
+      align-items: stretch;
+      margin-top: 0.75rem;
+    }
+
+    .code-editor-panel {
+      display: flex;
+      flex-direction: column;
+      background: var(--code-bg);
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid #1e293b;
+    }
+
+    .panel-toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.55rem 0.9rem;
+      background: #1e293b;
+      color: #cbd5e1;
+      font-size: 0.76rem;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+    }
+
+    .toolbar-actions {
+      display: flex;
+      gap: 0.45rem;
+    }
+
+    .btn-small {
+      background: #334155;
+      color: #f8fafc;
+      border: none;
+      padding: 0.28rem 0.65rem;
+      border-radius: 5px;
+      font-size: 0.74rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .btn-small:hover {
+      background: #475569;
+    }
+
+    .btn-small.primary {
+      background: var(--primary);
+    }
+
+    .btn-small.primary:hover {
+      background: var(--primary-hover);
+    }
+
+    .code-textarea {
+      width: 100%;
+      flex: 1;
+      min-height: 250px;
+      background: var(--code-bg);
+      color: #e2e8f0;
+      border: none;
+      padding: 0.95rem 1.1rem;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.84rem;
+      line-height: 1.55;
+      resize: vertical;
+      outline: none;
+    }
+
+    .preview-panel {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: #ffffff;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: 0 2px 6px rgba(15, 23, 42, 0.03);
+    }
+
+    .preview-header {
+      padding: 0.55rem 0.9rem;
+      background: var(--bg-sidebar);
+      border-bottom: 1px solid var(--border);
+      font-size: 0.76rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .preview-canvas {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      justify-content: flex-start;
+      padding: 1rem;
+      min-height: 250px;
+      background-image: radial-gradient(#e2e8f0 1px, transparent 1px);
+      background-size: 16px 16px;
+      gap: 0.75rem;
+    }
+
+    .console-output {
+      width: 100%;
+      padding: 0.75rem 0.9rem;
+      background: #0f172a;
+      color: #38bdf8;
+      border-radius: 8px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 0.82rem;
+      white-space: pre-wrap;
+      word-break: break-word;
+      border: 1px solid #1e293b;
+      line-height: 1.5;
+    }
+
+    .latex-preview-box {
+      width: 100%;
+      padding: 0.85rem 1rem;
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      text-align: center;
+      font-size: 1.15rem;
+      color: var(--text-main);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+    }
+
+    .latex-preview-label {
+      display: block;
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 0.35rem;
+      letter-spacing: 0.04em;
+    }
+
+    /* KARTU KATEGORI & FUNGSI */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .fn-card {
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      padding: 1.1rem;
+      text-decoration: none;
+      color: inherit;
+      background: var(--bg-card);
+      transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .fn-card:hover {
+      border-color: var(--primary);
+      box-shadow: 0 6px 16px rgba(37, 99, 235, 0.08);
+      transform: translateY(-2px);
+    }
+
+    .fn-card h3 {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      color: var(--primary);
+      font-size: 0.98rem;
+      margin: 0 0 0.4rem 0;
+    }
+
+    .fn-card p {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin: 0;
+    }
+
+    .info-callout {
+      background: var(--primary-light);
+      border-left: 4px solid var(--primary);
+      padding: 0.95rem 1.15rem;
+      border-radius: 0 8px 8px 0;
+      margin-bottom: 1.25rem;
+      font-size: 0.9rem;
+      color: #1e3a8a;
+    }
+
+    .beta-callout {
+      background: #fffbeb;
+      border-left: 4px solid var(--accent-amber);
+      padding: 1rem 1.15rem;
+      border-radius: 0 8px 8px 0;
+      margin-bottom: 1.5rem;
+      font-size: 0.9rem;
+      color: #92400e;
+    }
+
+    .btn-github {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      background: #0f172a;
+      color: #ffffff;
+      text-decoration: none;
+      padding: 0.5rem 0.95rem;
+      border-radius: 7px;
+      font-size: 0.84rem;
+      font-weight: 600;
+      margin-top: 0.6rem;
+      transition: background 0.15s;
+    }
+
+    .btn-github:hover {
+      background: #334155;
+    }
+
+    .page-nav {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .page-nav a {
+      text-decoration: none;
+      padding: 0.75rem 1rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text-main);
+      font-size: 0.88rem;
+      transition: border-color 0.15s, background 0.15s;
+      max-width: 48%;
+    }
+
+    .page-nav a:hover {
+      border-color: var(--primary);
+      background: var(--primary-light);
+    }
+
+    .page-nav span {
+      display: block;
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      margin-bottom: 0.15rem;
+    }
+
+    /* Gaya Tabel W3 untuk fungsi buattabelsoal */
+    .w3-table-all {
+      border-collapse: collapse;
+      width: 100%;
+      background: #fff;
+      font-size: 0.82rem;
+    }
+
+    .w3-deep-orange {
+      background-color: #ff5722 !important;
+      color: #fff !important;
+      font-weight: 700;
+      text-align: center !important;
+      vertical-align: middle;
+    }
+
+    @media (max-width: 960px) {
+      .demo-container {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 780px) {
+      body {
+        flex-direction: column;
+      }
+
+      .topbar-mobile {
+        display: flex;
+      }
+
+      .sidebar {
+        position: fixed;
+        left: -340px;
+        top: 0;
+        bottom: 0;
+        z-index: 50;
+        transition: left 0.25s ease;
+        box-shadow: 4px 0 20px rgba(0, 0, 0, 0.15);
+      }
+
+      .sidebar.open {
+        left: 0;
+      }
+
+      .content {
+        padding: 1.5rem 1.25rem 3rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- BAR ATAS UNTUK LAYAR HP -->
+  <div class="topbar-mobile">
+    <a href="#pengenalan" class="brand" style="margin:0;font-size:1.1rem;">🧮 matematikin.js <span
+        class="badge-beta">v0.0.1 beta</span></a>
+    <button class="menu-btn" id="mobileMenuBtn">☰ Menu Fungsi</button>
+  </div>
+
+  <!-- PANEL MENU KIRI (SIDEBAR) -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="brand-row">
+        <a href="#pengenalan" class="brand">🧮 matematikin.js</a>
+        <span class="badge-beta">v0.0.1 beta</span>
+      </div>
+      <div class="brand-sub">Dokumentasi Resmi • 14 Kategori • 107 Fungsi</div>
+      <div class="search-wrapper">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="searchInput" class="search-box" placeholder="Cari fungsi / kategori...">
+      </div>
+    </div>
+    <nav class="sidebar-nav" id="sidebarNav"></nav>
+  </aside>
+
+  <!-- AREA KONTEN KANAN -->
+  <div class="main-wrapper">
+    <main class="content" id="mainContent"></main>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- PUSTAKA MATEMATIKIN.JS (EMBEDDED LANGSUNG AGAR LIVE DEMO BERJALAN)    -->
+  <!-- ===================================================================== -->
+  <script>
+    const PI = Math.PI;
+    const E = Math.E;
+    const PHI = (1 + Math.sqrt(5)) / 2;
+
+    const cekBulat = (n) => Number.isInteger(n);
+    const cekBilKuadrat = (n) => typeof n === 'number' && n >= 0 && cekBulat(Math.sqrt(n));
+
+    const faktorPrimaTerkecil = (n) => {
+      if (typeof n !== 'number' || !Number.isFinite(n)) return NaN;
+      n = Math.abs(n);
+      if (!Number.isInteger(n) || n === 0) return 0;
+      if (n === 1) return 1;
+      if (n % 2 === 0) return 2;
+      if (n % 3 === 0) return 3;
+      if (n % 5 === 0) return 5;
+      const m = Math.sqrt(n);
+      for (let i = 7; i <= m; i += 30) {
+        if (n % i === 0) return i;
+        if (n % (i + 4) === 0) return i + 4;
+        if (n % (i + 6) === 0) return i + 6;
+        if (n % (i + 10) === 0) return i + 10;
+        if (n % (i + 12) === 0) return i + 12;
+        if (n % (i + 16) === 0) return i + 16;
+        if (n % (i + 22) === 0) return i + 22;
+        if (n % (i + 24) === 0) return i + 24;
+      }
+      return n;
+    };
+
+    const cekPrima = (n) => {
+      if (!Number.isInteger(n) || n < 2) return false;
+      return n === faktorPrimaTerkecil(n);
+    };
+
+    const faktorisasiPrima = (n) => {
+      if (!Number.isInteger(n) || n === 0 || Math.abs(n) === 1) return n.toString();
+      if (n < 0) return `-${faktorisasiPrima(-n)}`;
+      const minFactor = faktorPrimaTerkecil(n);
+      if (n === minFactor) return n.toString();
+      return `${minFactor}*${faktorisasiPrima(n / minFactor)}`;
+    };
+
+    const primaBerikutnya = (n) => {
+      if (typeof n !== 'number' || !Number.isFinite(n)) return NaN;
+      if (n < 2) return 2;
+      n = Math.floor(n);
+      const nilaiAwal = n + (n % 2) + 1;
+      for (let i = nilaiAwal; i <= Number.MAX_SAFE_INTEGER; i += 2) {
+        if (cekPrima(i)) return i;
+      }
+      return NaN;
+    };
+
+    const primaKembarBerikutnya = (n) => {
+      if (typeof n !== 'number' || !Number.isFinite(n)) return NaN;
+      if (n < 3) return 3;
+      if (n < 5) return 5;
+      n = Math.floor(n);
+      const nilaiAwal = 6 * Math.ceil((n + 2) / 6);
+      for (let i = nilaiAwal; i <= Number.MAX_SAFE_INTEGER; i += 6) {
+        if (cekPrima(i - 1) && cekPrima(i + 1)) return i - 1;
+      }
+      return NaN;
+    };
+
+    const primaKuadrupletBerikutnya = (n) => {
+      if (typeof n !== 'number' || !Number.isFinite(n)) return NaN;
+      if (n < 5) return 5;
+      if (n < 11) return 11;
+      n = Math.floor(n);
+      const nilaiAwal = 30 * Math.ceil((n - 10) / 30);
+      for (let i = nilaiAwal; i <= Number.MAX_SAFE_INTEGER; i += 30) {
+        if (cekPrima(i + 11) && cekPrima(i + 13) && cekPrima(i + 17) && cekPrima(i + 19)) {
+          return i + 11;
+        }
+      }
+      return NaN;
+    };
+
+    const faktorial = (n) => {
+      if (typeof n !== 'number' || !Number.isInteger(n) || n < 0) return NaN;
+      if (n === 0 || n === 1) return 1;
+      let hasil = 1;
+      for (let i = 2; i <= n; i++) hasil *= i;
+      return hasil;
+    };
+
+    const daftarFaktorPrima = (n) => {
+      if (typeof n !== 'number' || !Number.isInteger(n) || n < 1) {
+        throw new Error("Input harus berupa bilangan bulat positif (>= 1)");
+      }
+      let hasil = [];
+      while (n !== 1) {
+        let faktor = faktorPrimaTerkecil(n);
+        hasil.push(faktor);
+        n /= faktor;
+      }
+      return hasil;
+    };
+
+    const _fpbDuaAngka = (a, b) => {
+      a = Math.abs(a); b = Math.abs(b);
+      while (b !== 0) {
+        let sisa = a % b;
+        a = b; b = sisa;
+      }
+      return a;
+    };
+
+    const _kpkDuaAngka = (a, b) => {
+      if (a === 0 || b === 0) return 0;
+      return Math.abs(a / _fpbDuaAngka(a, b) * b);
+    };
+
+    const fpb = (...angka) => {
+      const deretAngka = Array.isArray(angka[0]) ? angka[0] : angka;
+      if (deretAngka.length === 0) return NaN;
+      if (!deretAngka.every(n => typeof n === 'number' && Number.isInteger(n))) {
+        throw new Error("MATEMATIKIN: Semua input FPB harus berupa bilangan bulat.");
+      }
+      return deretAngka.reduce((hasilSementara, n) => _fpbDuaAngka(hasilSementara, n));
+    };
+
+    const kpk = (...angka) => {
+      const deretAngka = Array.isArray(angka[0]) ? angka[0] : angka;
+      if (deretAngka.length === 0) return NaN;
+      if (!deretAngka.every(n => typeof n === 'number' && Number.isInteger(n))) {
+        throw new Error("MATEMATIKIN: Semua input KPK harus berupa bilangan bulat.");
+      }
+      return deretAngka.reduce((hasilSementara, n) => _kpkDuaAngka(hasilSementara, n));
+    };
+
+    const faktorKuadratTerbesar = (n) => {
+      if (typeof n !== 'number' || !Number.isInteger(n) || n < 1) return NaN;
+      let k = Math.floor(Math.sqrt(n));
+      while (k > 1) {
+        if (n % (k * k) === 0) break;
+        k--;
+      }
+      return k;
+    };
+
+    const diskriminan = (a, b, c) => {
+      if (typeof a !== 'number' || typeof b !== 'number' || typeof c !== 'number') return NaN;
+      if (!Number.isFinite(a) || !Number.isFinite(b) || !Number.isFinite(c)) return NaN;
+      if (a === 0) throw new Error("MATEMATIKIN: Nilai koefisien 'a' tidak boleh 0 pada persamaan kuadrat.");
+      return (b * b) - (4 * a * c);
+    };
+
+    const bilBulatAcak = (n) => {
+      if (typeof n !== 'number' || !Number.isFinite(n) || n < 0) return NaN;
+      n = Math.floor(n);
+      return Math.floor(Math.random() * (n + 1));
+    };
+
+    const determinan = (matriks) => {
+      if (!Array.isArray(matriks) || matriks.length === 0) {
+        throw new Error("MATEMATIKIN: Input harus berupa matriks (array 2D).");
+      }
+      const n = matriks.length;
+      const isPersegi = matriks.every(baris => Array.isArray(baris) && baris.length === n);
+      if (!isPersegi) {
+        throw new Error("MATEMATIKIN: Matriks harus berbentuk persegi (jumlah baris = jumlah kolom).");
+      }
+      if (n === 1) return matriks[0][0];
+      if (n === 2) return (matriks[0][0] * matriks[1][1]) - (matriks[0][1] * matriks[1][0]);
+      let hasil = 0;
+      for (let i = 0; i < n; i++) {
+        const tanda = (i % 2 === 0) ? 1 : -1;
+        const subMatriks = matriks.slice(1).map(baris => baris.filter((_, indeksKolom) => indeksKolom !== i));
+        hasil += tanda * matriks[0][i] * determinan(subMatriks);
+      }
+      return hasil;
+    };
+
+    const matriksMinor = (matriks) => {
+      if (!Array.isArray(matriks) || matriks.length === 0) {
+        throw new Error("MATEMATIKIN: Input harus berupa matriks (array 2D).");
+      }
+      const n = matriks.length;
+      const isPersegi = matriks.every(baris => Array.isArray(baris) && baris.length === n);
+      if (!isPersegi) throw new Error("MATEMATIKIN: Matriks harus berbentuk persegi untuk mencari minor.");
+      if (n === 1) return [[1]];
+      return matriks.map((baris, i) => baris.map((_, j) => {
+        const subMatriks = matriks.filter((_, indeksBaris) => indeksBaris !== i).map(b => b.filter((_, indeksKolom) => indeksKolom !== j));
+        return determinan(subMatriks);
+      }));
+    };
+
+    const matriksKofaktor = (matriks) => {
+      const minor = matriksMinor(matriks);
+      return minor.map((baris, i) => baris.map((nilai, j) => {
+        const tanda = ((i + j) % 2 === 0) ? 1 : -1;
+        return nilai * tanda + 0;
+      }));
+    };
+
+    const transpose = (matriks) => {
+      if (!Array.isArray(matriks) || matriks.length === 0 || !Array.isArray(matriks[0])) {
+        throw new Error("MATEMATIKIN: Input harus berupa matriks (array 2D) yang tidak kosong.");
+      }
+      return matriks[0].map((_, indeksKolom) => matriks.map(baris => baris[indeksKolom]));
+    };
+
+    const adjoin = (matriks) => {
+      if (!Array.isArray(matriks) || matriks.length === 0) {
+        throw new Error("MATEMATIKIN: Input harus berupa matriks yang valid.");
+      }
+      const n = matriks.length;
+      if (n === 2) {
+        return [[matriks[1][1], -matriks[0][1]], [-matriks[1][0], matriks[0][0]]];
+      }
+      return transpose(matriksKofaktor(matriks));
+    };
+
+    const kaliMatriks = (pengali, matriks) => {
+      if (typeof pengali === 'number') {
+        if (!Array.isArray(matriks) || matriks.length === 0) {
+          throw new Error("MATEMATIKIN: Parameter kedua harus berupa matriks.");
+        }
+        return matriks.map(baris => baris.map(elemen => pengali * elemen));
+      }
+      if (Array.isArray(pengali) && Array.isArray(matriks)) {
+        const kolomA = pengali[0].length;
+        const barisB = matriks.length;
+        if (kolomA !== barisB) {
+          throw new Error("MATEMATIKIN: Jumlah kolom matriks pertama harus sama dengan jumlah baris matriks kedua.");
+        }
+        return pengali.map(baris =>
+          matriks[0].map((_, j) =>
+            baris.reduce((total, elemenA, k) => total + (elemenA * matriks[k][j]), 0)
+          )
+        );
+      }
+      throw new Error("MATEMATIKIN: Tipe data pengali tidak valid (harus angka atau matriks).");
+    };
+
+    const invers = (matriks) => {
+      const det = determinan(matriks);
+      if (det === 0) throw new Error("MATEMATIKIN: Matriks tidak memiliki invers karena determinannya 0.");
+      const adj = adjoin(matriks);
+      return adj.map(baris => baris.map(elemen => elemen / det));
+    };
+
+    const bentukMatriks = (matriks) => {
+      if (!Array.isArray(matriks) || matriks.length === 0) return "";
+      const isiLatex = matriks.map(baris => baris.join(' & ')).join(' \\\\ ');
+      return `\\begin{pmatrix} ${isiLatex} \\end{pmatrix}`;
+    };
+
+    const jumlah = (...angka) => {
+      const deretAngka = Array.isArray(angka[0]) ? angka[0] : angka;
+      if (deretAngka.length === 0) return 0;
+      if (!deretAngka.every(n => typeof n === 'number' && Number.isFinite(n))) {
+        throw new Error("MATEMATIKIN: Semua elemen yang dijumlahkan harus berupa angka yang valid.");
+      }
+      return deretAngka.reduce((akumulator, nilaiSaatIni) => akumulator + nilaiSaatIni, 0);
+    };
+
+    const jumlahKuadrat = (...angka) => {
+      const deretAngka = Array.isArray(angka[0]) ? angka[0] : angka;
+      if (deretAngka.length === 0) return 0;
+      if (!deretAngka.every(n => typeof n === 'number' && Number.isFinite(n))) {
+        throw new Error("MATEMATIKIN: Semua elemen harus berupa angka yang valid.");
+      }
+      return deretAngka.reduce((akumulator, nilaiSaatIni) => akumulator + (nilaiSaatIni * nilaiSaatIni), 0);
+    };
+
+    const panjangVektor = (...vektor) => {
+      const elemenVektor = Array.isArray(vektor[0]) ? vektor[0] : vektor;
+      if (elemenVektor.length === 0) return 0;
+      return Math.sqrt(jumlahKuadrat(elemenVektor));
+    };
+
+    const dotVektor = (vektor1, vektor2) => {
+      if (!Array.isArray(vektor1) || !Array.isArray(vektor2)) {
+        throw new Error("MATEMATIKIN: Kedua input harus berupa array vektor.");
+      }
+      if (vektor1.length !== vektor2.length) {
+        throw new Error("MATEMATIKIN: Operasi Dot Product gagal. Kedua vektor harus memiliki dimensi yang sama.");
+      }
+      if (vektor1.length === 0) return 0;
+      return vektor1.reduce((total, nilaiSaatIni, indeks) => total + (nilaiSaatIni * vektor2[indeks]), 0);
+    };
+
+    const crossVektor = (vektor1, vektor2) => {
+      if (!Array.isArray(vektor1) || !Array.isArray(vektor2)) {
+        throw new Error("MATEMATIKIN: Kedua input harus berupa array vektor.");
+      }
+      if (vektor1.length !== 3 || vektor2.length !== 3) {
+        throw new Error("MATEMATIKIN: Operasi Cross Product hanya berlaku untuk vektor 3 dimensi (terdiri dari komponen x, y, z).");
+      }
+      return [
+        (vektor1[1] * vektor2[2]) - (vektor1[2] * vektor2[1]),
+        (vektor1[2] * vektor2[0]) - (vektor1[0] * vektor2[2]),
+        (vektor1[0] * vektor2[1]) - (vektor1[1] * vektor2[0])
+      ];
+    };
+
+    const proyeksiVektor = (vektorAsal, vektorTujuan) => {
+      if (!Array.isArray(vektorAsal) || !Array.isArray(vektorTujuan)) {
+        throw new Error("MATEMATIKIN: Input harus berupa array vektor.");
+      }
+      if (vektorAsal.length !== vektorTujuan.length) {
+        throw new Error("MATEMATIKIN: Dimensi kedua vektor harus sama.");
+      }
+      const penyebut = dotVektor(vektorTujuan, vektorTujuan);
+      if (penyebut === 0) throw new Error("MATEMATIKIN: Vektor tujuan tidak boleh berupa vektor nol.");
+      const skalar = dotVektor(vektorAsal, vektorTujuan) / penyebut;
+      return vektorTujuan.map(elemen => skalar * elemen);
+    };
+
+    const proyeksiSkalar = (vektorAsal, vektorTujuan) => {
+      const panjangTujuan = panjangVektor(vektorTujuan);
+      if (panjangTujuan === 0) throw new Error("MATEMATIKIN: Vektor tujuan tidak boleh berupa vektor nol.");
+      return dotVektor(vektorAsal, vektorTujuan) / panjangTujuan;
+    };
+
+    const sudutVektor = (vektor1, vektor2) => {
+      const mag1 = panjangVektor(vektor1);
+      const mag2 = panjangVektor(vektor2);
+      if (mag1 === 0 || mag2 === 0) throw new Error("MATEMATIKIN: Sudut tidak dapat dihitung jika ada vektor nol.");
+      const cosTheta = dotVektor(vektor1, vektor2) / (mag1 * mag2);
+      const cosAman = Math.max(-1, Math.min(1, cosTheta));
+      return (Math.acos(cosAman) * 180) / Math.PI;
+    };
+
+    const vektorSatuan = (vektor) => {
+      const elemenVektor = Array.isArray(vektor[0]) ? vektor[0] : vektor;
+      const panjang = panjangVektor(elemenVektor);
+      if (panjang === 0) throw new Error("MATEMATIKIN: Vektor nol tidak memiliki vektor satuan.");
+      return elemenVektor.map(komponen => komponen / panjang);
+    };
+
+    const aritmetikaVektor = (vektor1, vektor2, operasi = 'tambah') => {
+      if (!Array.isArray(vektor1) || !Array.isArray(vektor2) || vektor1.length !== vektor2.length) {
+        throw new Error("MATEMATIKIN: Input harus berupa array vektor dengan dimensi yang sama.");
+      }
+      return vektor1.map((komponen, indeks) => operasi === 'kurang' ? komponen - vektor2[indeks] : komponen + vektor2[indeks]);
+    };
+
+    const sederhanakanAkar = (n) => {
+      if (typeof n !== 'number' || !Number.isInteger(n) || n < 0) {
+        throw new Error("MATEMATIKIN: Input harus berupa bilangan bulat positif atau nol.");
+      }
+      if (n === 0) return "0";
+      const a = faktorKuadratTerbesar(n);
+      const b = n / (a * a);
+      if (b === 1) return `${a}`;
+      if (a === 1) return `\\sqrt{${n}}`;
+      return `${a}\\sqrt{${b}}`;
+    };
+
+    const acakAntara = (min = 0, max = 1) => {
+      if (typeof min !== 'number' || typeof max !== 'number') {
+        throw new Error("MATEMATIKIN: Batas minimum dan maksimum harus berupa angka.");
+      }
+      min = Math.floor(min); max = Math.floor(max);
+      const batasBawah = Math.min(min, max);
+      const batasAtas = Math.max(min, max);
+      return Math.floor(Math.random() * (batasAtas - batasBawah + 1)) + batasBawah;
+    };
+
+    const acakTanda = (n = 1) => {
+      if (typeof n !== 'number' || !Number.isFinite(n)) throw new Error("MATEMATIKIN: Input harus berupa angka.");
+      return Math.random() < 0.5 ? n : -n;
+    };
+
+    const pecahan = (pembilang, penyebut) => {
+      if (!Number.isInteger(pembilang) || !Number.isInteger(penyebut)) {
+        throw new Error("MATEMATIKIN: Pembilang dan penyebut harus berupa bilangan bulat.");
+      }
+      if (penyebut === 0) throw new Error("MATEMATIKIN: Penyebut pecahan tidak boleh bernilai nol.");
+      if (pembilang === 0) return "0";
+      const apakahNegatif = (pembilang < 0) !== (penyebut < 0);
+      const absPem = Math.abs(pembilang);
+      const absPen = Math.abs(penyebut);
+      const faktor = fpb(absPem, absPen);
+      const pemSederhana = absPem / faktor;
+      const penSederhana = absPen / faktor;
+      const tanda = apakahNegatif ? "-" : "";
+      if (penSederhana === 1) return `${tanda}${pemSederhana}`;
+      return `${tanda}\\dfrac{${pemSederhana}}{${penSederhana}}`;
+    };
+
+    const koefisien = (n = 0) => {
+      if (typeof n !== 'number' || !Number.isFinite(n)) throw new Error("MATEMATIKIN: Input koefisien harus berupa angka.");
+      if (n === 1) return "";
+      if (n === -1) return "-";
+      return String(n);
+    };
+
+    const formatKonstanta = (n = 0) => {
+      if (typeof n !== 'number' || !Number.isFinite(n) || n === 0) return "";
+      return n < 0 ? `${n}` : `+${n}`;
+    };
+
+    const formatSuku = (n = 0) => {
+      if (typeof n !== 'number' || !Number.isFinite(n) || n === 0) return "";
+      if (n === 1) return "+ ";
+      if (n === -1) return "- ";
+      return n < 0 ? `- ${Math.abs(n)}` : `+ ${n}`;
+    };
+
+    const deretTanpaNol = (min = -9, max = 9) => {
+      if (typeof min !== 'number' || typeof max !== 'number') {
+        throw new Error("MATEMATIKIN: Batas minimum dan maksimum harus berupa angka.");
+      }
+      const batasBawah = Math.min(min, max);
+      const batasAtas = Math.max(min, max);
+      return Array.from({ length: batasAtas - batasBawah + 1 }, (_, i) => batasBawah + i).filter(angka => angka !== 0);
+    };
+
+    const kurungNegatif = (angka = 0) => {
+      if (typeof angka !== 'number' || !Number.isFinite(angka)) return "";
+      return angka < 0 ? `(${angka})` : String(angka);
+    };
+
+    const acakMinus = () => acakTanda() === -1 ? "-" : "";
+
+    const deretBilBul = (batasBawah = 0, batasAtas = 1) => {
+      if (!Number.isInteger(batasBawah) || !Number.isInteger(batasAtas)) {
+        throw new Error("MATEMATIKIN: Batas bawah dan atas harus berupa bilangan bulat.");
+      }
+      const min = Math.min(batasBawah, batasAtas);
+      const max = Math.max(batasBawah, batasAtas);
+      return Array.from({ length: max - min + 1 }, (_, i) => min + i);
+    };
+
+    const acakArray = (arr) => {
+      if (!Array.isArray(arr)) throw new Error("MATEMATIKIN: Input harus berupa array.");
+      const salinan = [...arr];
+      for (let i = salinan.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [salinan[i], salinan[j]] = [salinan[j], salinan[i]];
+      }
+      return salinan;
+    };
+
+    const pilihAcak = (arr, num = 1) => {
+      if (!Array.isArray(arr) || num <= 0) return [];
+      return acakArray(arr).slice(0, num);
+    };
+
+    const pilihSebagian = (arr, num = 1) => {
+      if (!Array.isArray(arr) || num <= 0) return [];
+      if (num >= arr.length) return [...arr];
+      const semuaIndeks = Array.from({ length: arr.length }, (_, i) => i);
+      const indeksTerpilih = acakArray(semuaIndeks).slice(0, num);
+      indeksTerpilih.sort((a, b) => a - b);
+      return indeksTerpilih.map(indeks => arr[indeks]);
+    };
+
+    const acakDerangement = (arr) => {
+      if (!Array.isArray(arr) || arr.length < 2) throw new Error("MATEMATIKIN: Derangement butuh minimal 2 elemen.");
+      if (arr.every(val => val === arr[0])) throw new Error("MATEMATIKIN: Derangement mustahil untuk elemen yang identik semua.");
+      let batasLooping = 0;
+      while (batasLooping < 1000) {
+        let hasilAcak = acakArray(arr);
+        if (hasilAcak.every((val, i) => val !== arr[i])) return hasilAcak;
+        batasLooping++;
+      }
+      throw new Error("MATEMATIKIN: Gagal menemukan kombinasi acak total.");
+    };
+
+    const _presisiTrigo = (nilai) => Math.round(nilai * 1e10) / 1e10;
+
+    const sin = (derajat = 0) => {
+      if (typeof derajat !== 'number' || !Number.isFinite(derajat)) throw new Error("MATEMATIKIN: Sudut harus berupa angka.");
+      return _presisiTrigo(Math.sin(derajat * Math.PI / 180));
+    };
+
+    const cos = (derajat = 0) => {
+      if (typeof derajat !== 'number' || !Number.isFinite(derajat)) throw new Error("MATEMATIKIN: Sudut harus berupa angka.");
+      return _presisiTrigo(Math.cos(derajat * Math.PI / 180));
+    };
+
+    const tan = (derajat = 0) => {
+      if (typeof derajat !== 'number' || !Number.isFinite(derajat)) throw new Error("MATEMATIKIN: Sudut harus berupa angka.");
+      if (Math.abs(derajat % 180) === 90) throw new Error(`MATEMATIKIN: Nilai Tangen untuk sudut ${derajat} derajat tidak terdefinisi (Infinity).`);
+      return _presisiTrigo(Math.tan(derajat * Math.PI / 180));
+    };
+
+    const csc = (derajat = 0) => {
+      if (typeof derajat !== 'number') throw new Error("MATEMATIKIN: Sudut harus berupa angka.");
+      if (derajat % 180 === 0) throw new Error(`MATEMATIKIN: Cosecan untuk sudut ${derajat} derajat tidak terdefinisi (Infinity).`);
+      return _presisiTrigo(1 / Math.sin(derajat * Math.PI / 180));
+    };
+
+    const sec = (derajat = 0) => {
+      if (typeof derajat !== 'number') throw new Error("MATEMATIKIN: Sudut harus berupa angka.");
+      if (Math.abs(derajat % 180) === 90) throw new Error(`MATEMATIKIN: Secan untuk sudut ${derajat} derajat tidak terdefinisi (Infinity).`);
+      return _presisiTrigo(1 / Math.cos(derajat * Math.PI / 180));
+    };
+
+    const ctg = (derajat = 0) => {
+      if (typeof derajat !== 'number') throw new Error("MATEMATIKIN: Sudut harus berupa angka.");
+      if (derajat % 180 === 0) throw new Error(`MATEMATIKIN: Cotangen untuk sudut ${derajat} derajat tidak terdefinisi (Infinity).`);
+      const r = derajat * Math.PI / 180;
+      return _presisiTrigo(Math.cos(r) / Math.sin(r));
+    };
+
+    const arcsin = (nilai) => {
+      if (typeof nilai !== 'number') throw new Error("MATEMATIKIN: Input harus berupa angka.");
+      if (nilai < -1 || nilai > 1) throw new Error("MATEMATIKIN: Domain Arcsin harus berada di rentang -1 hingga 1.");
+      return _presisiTrigo(Math.asin(nilai) * 180 / Math.PI);
+    };
+
+    const arccos = (nilai) => {
+      if (typeof nilai !== 'number') throw new Error("MATEMATIKIN: Input harus berupa angka.");
+      if (nilai < -1 || nilai > 1) throw new Error("MATEMATIKIN: Domain Arccos harus berada di rentang -1 hingga 1.");
+      return _presisiTrigo(Math.acos(nilai) * 180 / Math.PI);
+    };
+
+    const arctan = (nilai) => {
+      if (typeof nilai !== 'number') throw new Error("MATEMATIKIN: Input harus berupa angka.");
+      return _presisiTrigo(Math.atan(nilai) * 180 / Math.PI);
+    };
+
+    const buattabelsoal = (arr = [], tempattabel = "", opsi = {}) => {
+      if (typeof window === 'undefined' || typeof document === 'undefined') {
+        throw new Error("MATEMATIKIN: buattabelsoal hanya dapat berjalan di lingkungan Browser.");
+      }
+      if (typeof QRCode === 'undefined') {
+        throw new Error("MATEMATIKIN: Library QRCode.js tidak ditemukan.");
+      }
+      if (!Array.isArray(arr) || arr.length === 0) {
+        throw new Error("MATEMATIKIN: Array soal tidak boleh kosong.");
+      }
+      if (!document.getElementById(tempattabel)) {
+        throw new Error(`MATEMATIKIN: Elemen dengan id '${tempattabel}' tidak ditemukan.`);
+      }
+      let teks = String.raw`<table class='w3-table-all tengah'>
+        <thead>
+            <th>NO</th><th>SOAL</th><th>SOLUSI</th>
+        </thead>
+        <tbody>`;
+      for (let i = 0; i < arr.length; i++) {
+        teks += String.raw`<tr><td class="w3-deep-orange" style="font-size: 24px; text-align: center">${i + 1}</td><td style="text-align: justify">${arr[i][0]}</td><td><div id="qrc${i}"></div><div style="text-align: center">${arr[i][1]}</div></td></tr>`;
+      }
+      teks += String.raw`</tbody></table>`;
+      document.getElementById(tempattabel).innerHTML = teks;
+      let lebarqr = opsi.lebarqr || 75;
+      let tinggiqr = opsi.tinggiqr || 75;
+      let warnaqr = opsi.warnaqr || "#000000";
+      let qrkode = [];
+      for (let i = 0; i < arr.length; i++) {
+        qrkode[i] = new QRCode("qrc" + i, {
+          text: String.raw`https://n9.cl/${arr[i][1]}`,
+          width: lebarqr,
+          height: tinggiqr,
+          colorDark: warnaqr,
+          colorLight: "#ffffff",
+          correctLevel: QRCode.CorrectLevel.H
+        });
+      }
+    };
+
+    const arrayBukit = (banyakBilangan, jumlah) => {
+      if (!Number.isInteger(banyakBilangan) || !Number.isInteger(jumlah)) throw new Error("MATEMATIKIN: banyakBilangan dan jumlah harus berupa bilangan bulat.");
+      if (banyakBilangan <= 0 || jumlah <= 0) throw new Error("MATEMATIKIN: banyakBilangan dan jumlah harus lebih dari 0.");
+      if (jumlah < banyakBilangan) throw new Error("MATEMATIKIN: 'jumlah' minimal harus sama dengan 'banyakBilangan'.");
+      let arr = Array(banyakBilangan).fill(Math.floor(jumlah / banyakBilangan));
+      let sisa = jumlah % banyakBilangan;
+      while (sisa > 0) { arr[Math.floor(Math.random() * banyakBilangan)]++; sisa--; }
+      for (let i = 0; i < banyakBilangan; i++) {
+        let idx1 = Math.floor(Math.random() * banyakBilangan);
+        let idx2 = Math.floor(Math.random() * banyakBilangan);
+        if (arr[idx1] > 1 && idx1 !== idx2) { arr[idx1]--; arr[idx2]++; }
+      }
+      arr.sort((a, b) => a - b);
+      let hasil = new Array(banyakBilangan);
+      let kiri = 0, kanan = banyakBilangan - 1;
+      for (let i = 0; i < banyakBilangan; i++) {
+        if (i % 2 === 0) hasil[kiri++] = arr[i];
+        else hasil[kanan--] = arr[i];
+      }
+      return hasil;
+    };
+
+    const arrayLembah = (banyakBilangan, jumlah) => {
+      if (!Number.isInteger(banyakBilangan) || !Number.isInteger(jumlah)) throw new Error("MATEMATIKIN: banyakBilangan dan jumlah harus berupa bilangan bulat.");
+      if (banyakBilangan <= 0 || jumlah <= 0) throw new Error("MATEMATIKIN: banyakBilangan dan jumlah harus lebih dari 0.");
+      if (jumlah < banyakBilangan) throw new Error("MATEMATIKIN: 'jumlah' minimal harus sama dengan 'banyakBilangan'.");
+      let arr = Array(banyakBilangan).fill(Math.floor(jumlah / banyakBilangan));
+      let sisa = jumlah % banyakBilangan;
+      while (sisa > 0) { arr[Math.floor(Math.random() * banyakBilangan)]++; sisa--; }
+      for (let i = 0; i < banyakBilangan; i++) {
+        let idx1 = Math.floor(Math.random() * banyakBilangan);
+        let idx2 = Math.floor(Math.random() * banyakBilangan);
+        if (arr[idx1] > 1 && idx1 !== idx2) { arr[idx1]--; arr[idx2]++; }
+      }
+      arr.sort((a, b) => b - a);
+      let hasil = new Array(banyakBilangan);
+      let kiri = 0, kanan = banyakBilangan - 1;
+      for (let i = 0; i < banyakBilangan; i++) {
+        if (i % 2 === 0) hasil[kiri++] = arr[i];
+        else hasil[kanan--] = arr[i];
+      }
+      return hasil;
+    };
+
+    const formatRibuan = (angka = 0) => {
+      if (typeof angka !== 'number' || !Number.isFinite(angka)) throw new Error("MATEMATIKIN: Input harus berupa angka yang valid.");
+      return angka.toLocaleString('id-ID');
+    };
+
+    const _adalahTitikObjek = (t) => t !== null && typeof t === 'object' && !Array.isArray(t) && 'x' in t && 'y' in t;
+    const _adalahTitik = (t) => Array.isArray(t) || _adalahTitikObjek(t);
+    const _keArrayTitik = (t) => {
+      if (Array.isArray(t)) return t;
+      if (_adalahTitikObjek(t)) return t.z !== undefined ? [t.x, t.y, t.z] : [t.x, t.y];
+      throw new Error("MATEMATIKIN: Titik harus berupa array [x, y] atau objek {x, y}.");
+    };
+    const _keFormatTitik = (koordinat, titikAsal) => {
+      if (!_adalahTitikObjek(titikAsal)) return koordinat;
+      const [x, y, z] = koordinat;
+      return koordinat.length > 2 ? { x, y, z } : { x, y };
+    };
+    const _ambilDuaTitik = (titik1, titik2) => {
+      if (titik2 === undefined && Array.isArray(titik1) && titik1.length === 2 && _adalahTitik(titik1[0]) && _adalahTitik(titik1[1])) {
+        [titik1, titik2] = titik1;
+      }
+      return [_keArrayTitik(titik1), _keArrayTitik(titik2)];
+    };
+    const _keArrayGaris = (garis) => {
+      if (!Array.isArray(garis) || garis.length !== 2) throw new Error("MATEMATIKIN: Garis harus berupa pasangan dua titik.");
+      return garis.map(_keArrayTitik);
+    };
+
+    const panjangGaris = (titik1, titik2) => {
+      [titik1, titik2] = _ambilDuaTitik(titik1, titik2);
+      if (titik1.length !== titik2.length) throw new Error("MATEMATIKIN: Input harus berupa dua koordinat titik dengan dimensi yang sama.");
+      const selisihSumbu = titik1.map((koordinat, indeks) => koordinat - titik2[indeks]);
+      return Math.hypot(...selisihSumbu);
+    };
+
+    const titikPotong = (garis1, garis2) => {
+      const [[x1, y1], [x2, y2]] = _keArrayGaris(garis1);
+      const [[x3, y3], [x4, y4]] = _keArrayGaris(garis2);
+      const penyebut = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
+      if (penyebut === 0) throw new Error("MATEMATIKIN: Garis sejajar atau berimpit, tidak memiliki titik potong.");
+      const t1 = (x1 * y2) - (y1 * x2);
+      const t2 = (x3 * y4) - (y3 * x4);
+      const xPotong = (t1 * (x3 - x4) - (x1 - x2) * t2) / penyebut;
+      const yPotong = (t1 * (y3 - y4) - (y1 - y2) * t2) / penyebut;
+      return _keFormatTitik([xPotong, yPotong], garis1[0]);
+    };
+
+    const titikBagiGaris = (titik1, titik2, m = 1, n = 1) => {
+      const koordinat1 = _keArrayTitik(titik1);
+      const koordinat2 = _keArrayTitik(titik2);
+      if (koordinat1.length !== koordinat2.length) throw new Error("MATEMATIKIN: Input harus berupa koordinat dengan dimensi yang sama.");
+      if (m + n === 0) throw new Error("MATEMATIKIN: Jumlah rasio perbandingan (m + n) tidak boleh bernilai nol.");
+      const hasil = koordinat1.map((nilai1, indeks) => (m * koordinat2[indeks] + n * nilai1) / (m + n));
+      return _keFormatTitik(hasil, titik1);
+    };
+
+    const titikTengah = (titik1, titik2) => titikBagiGaris(titik1, titik2, 1, 1);
+
+    const pusatLingkaran3Titik = (titik1, titik2, titik3) => {
+      const [x1, y1] = _keArrayTitik(titik1);
+      const [x2, y2] = _keArrayTitik(titik2);
+      const [x3, y3] = _keArrayTitik(titik3);
+      const a = x2 - x1, b = y2 - y1, c = x3 - x2, d = y3 - y2;
+      const e = (a * (x1 + x2)) + (b * (y1 + y2));
+      const f = (c * (x2 + x3)) + (d * (y2 + y3));
+      const g = 2 * ((a * d) - (b * c));
+      if (g === 0) throw new Error("MATEMATIKIN: Ketiga titik sejajar (kolinier), tidak dapat membentuk lingkaran.");
+      return _keFormatTitik([((d * e) - (b * f)) / g, ((a * f) - (c * e)) / g], titik1);
+    };
+
+    const jariLingkaran3Titik = (titik1, titik2, titik3) => {
+      const sisiA = panjangGaris(titik1, titik2);
+      const sisiB = panjangGaris(titik2, titik3);
+      const sisiC = panjangGaris(titik3, titik1);
+      const s = (sisiA + sisiB + sisiC) / 2;
+      const luasSegitiga = Math.sqrt(Math.max(0, s * (s - sisiA) * (s - sisiB) * (s - sisiC)));
+      if (luasSegitiga === 0) throw new Error("MATEMATIKIN: Ketiga titik sejajar, luas segitiga 0.");
+      return (sisiA * sisiB * sisiC) / (4 * luasSegitiga);
+    };
+
+    const gradien = (titik1, titik2) => {
+      const [[x1, y1], [x2, y2]] = _ambilDuaTitik(titik1, titik2);
+      const dx = x2 - x1, dy = y2 - y1;
+      if (dx === 0) return dy === 0 ? NaN : Infinity;
+      return dy / dx;
+    };
+
+    const titikBerat = (...titik) => {
+      if (titik.length !== 3) throw new Error("MATEMATIKIN: Fungsi titikBerat membutuhkan tepat 3 titik koordinat.");
+      const koordinat = titik.map(_keArrayTitik);
+      const dimensi = koordinat[0].length;
+      if (!koordinat.every(t => t.length === dimensi)) throw new Error("MATEMATIKIN: Semua titik harus memiliki dimensi yang sama.");
+      const hasil = koordinat[0].map((_, indeks) => koordinat.reduce((total, t) => total + t[indeks], 0) / 3);
+      return _keFormatTitik(hasil, titik[0]);
+    };
+
+    const kombinasi = (n, r) => {
+      if (typeof n !== 'number' || typeof r !== 'number' || !Number.isInteger(n) || !Number.isInteger(r)) return 0;
+      if (n < 0 || r < 0 || r > n) return 0;
+      if (r === 0 || r === n) return 1;
+      r = Math.min(r, n - r);
+      let hasil = 1;
+      for (let i = 1; i <= r; i++) hasil = hasil * (n - i + 1) / i;
+      return Math.round(hasil);
+    };
+    const C = kombinasi;
+
+    const permutasi = (n, r) => {
+      if (typeof n !== 'number' || typeof r !== 'number' || !Number.isInteger(n) || !Number.isInteger(r)) return 0;
+      if (n < 0 || r < 0 || r > n) return 0;
+      let hasil = 1;
+      for (let i = 0; i < r; i++) hasil *= (n - i);
+      return Math.round(hasil);
+    };
+    const P = permutasi;
+
+    const jabarFaktorial = (n) => {
+      if (!Number.isInteger(n) || n <= 0) return "";
+      return Array.from({ length: n }, (_, i) => n - i).join(" \\cdot ");
+    };
+
+    const bulatkanDesimal = (angka, desimal = 2) => {
+      if (typeof angka !== 'number') throw new Error("MATEMATIKIN: Input harus berupa angka.");
+      if (!Number.isFinite(angka) || String(angka).includes('e')) {
+        return Number.isFinite(angka) ? Number(angka.toFixed(desimal)) : angka;
+      }
+      return Number(Math.round(angka + "e" + desimal) + "e-" + desimal);
+    };
+
+    const mean = (arr) => {
+      if (!Array.isArray(arr) || arr.length === 0) return 0;
+      const total = arr.reduce((akumulator, nilai) => akumulator + nilai, 0);
+      return bulatkanDesimal(total / arr.length, 2);
+    };
+
+    const median = (arr) => {
+      if (!Array.isArray(arr) || arr.length === 0) return 0;
+      const dataUrut = [...arr].sort((a, b) => a - b);
+      const mid = Math.floor(dataUrut.length / 2);
+      if (dataUrut.length % 2 === 0) return bulatkanDesimal((dataUrut[mid - 1] + dataUrut[mid]) / 2, 2);
+      return dataUrut[mid];
+    };
+
+    const modus = (arr) => {
+      if (!Array.isArray(arr) || arr.length === 0) return [];
+      const frekuensi = {};
+      let frekuensiTertinggi = 0;
+      arr.forEach(angka => {
+        frekuensi[angka] = (frekuensi[angka] || 0) + 1;
+        if (frekuensi[angka] > frekuensiTertinggi) frekuensiTertinggi = frekuensi[angka];
+      });
+      const daftarModus = Object.keys(frekuensi).filter(kunci => frekuensi[kunci] === frekuensiTertinggi).map(Number);
+      if (daftarModus.length === Object.keys(frekuensi).length) return [];
+      return daftarModus.sort((a, b) => a - b);
+    };
+
+    const varians = (arr) => {
+      if (!Array.isArray(arr) || arr.length === 0) return 0;
+      const rataRata = mean(arr);
+      const jumlahKuadratSelisih = arr.reduce((total, angka) => total + Math.pow(angka - rataRata, 2), 0);
+      return bulatkanDesimal(jumlahKuadratSelisih / arr.length, 2);
+    };
+
+    const simpanganBaku = (arr) => {
+      if (!Array.isArray(arr) || arr.length < 2) return 0;
+      const rata = arr.reduce((t, n) => t + n, 0) / arr.length;
+      const v = arr.reduce((t, n) => t + (n - rata) ** 2, 0) / arr.length;
+      return bulatkanDesimal(Math.sqrt(v), 2);
+    };
+
+    const _rapikan = (n) => {
+      if (!Number.isFinite(n)) return n;
+      if (Number.isInteger(n)) return n + 0;
+      if (Math.abs(n) >= 1e5) return Number(n.toPrecision(15)) + 0;
+      return Math.round(n * 1e10) / 1e10 + 0;
+    };
+
+    const _pastikanAngka = (...nilai) => {
+      if (!nilai.every(n => typeof n === 'number' && Number.isFinite(n))) {
+        throw new Error("MATEMATIKIN: Semua koordinat/parameter harus berupa angka terhingga.");
+      }
+    };
+
+    const buatOpsiGanda = (jawabanBenar, toleransi = 1, jumlahOpsi = 5, opsi = {}) => {
+      if (typeof jawabanBenar !== 'number' || !Number.isFinite(jawabanBenar)) {
+        throw new Error("MATEMATIKIN: Jawaban benar harus berupa angka.");
+      }
+      if (typeof toleransi !== 'number' || !Number.isFinite(toleransi) || toleransi === 0) {
+        throw new Error("MATEMATIKIN: Toleransi harus berupa angka terhingga yang tidak sama dengan 0.");
+      }
+      if (!Number.isInteger(jumlahOpsi) || jumlahOpsi < 1) {
+        throw new Error("MATEMATIKIN: Jumlah opsi harus berupa bilangan bulat minimal 1.");
+      }
+      const dibutuhkan = Math.min(jumlahOpsi, 26) - 1;
+      const jarak = Math.abs(toleransi);
+      const tidakNegatif = opsi.tidakNegatif === true && jawabanBenar >= 0;
+      const desimal = opsi.desimal;
+      const kandidat = new Set();
+      const targetKandidat = Math.max(dibutuhkan * 2, 6);
+      for (let k = 1; k <= 1000 && kandidat.size < targetKandidat; k++) {
+        for (const tanda of [-1, 1]) {
+          let nilai = _rapikan(jawabanBenar + tanda * k * jarak);
+          if (desimal !== undefined) nilai = bulatkanDesimal(nilai, desimal) + 0;
+          if (nilai === jawabanBenar) continue;
+          if (tidakNegatif && nilai < 0) continue;
+          kandidat.add(nilai);
+        }
+      }
+      if (kandidat.size < dibutuhkan) throw new Error("MATEMATIKIN: Tidak dapat membuat cukup pengecoh unik.");
+      const pengecoh = acakArray([...kandidat]).slice(0, dibutuhkan);
+      const semuaOpsi = acakArray([{ nilai: jawabanBenar, isBenar: true }, ...pengecoh.map(nilai => ({ nilai, isBenar: false }))]);
+      const abjad = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+      return semuaOpsi.map((item, indeks) => ({ opsi: abjad[indeks], nilai: item.nilai, isBenar: item.isBenar }));
+    };
+
+    const formatRupiah = (angka = 0) => {
+      if (typeof angka !== 'number' || !Number.isFinite(angka)) return "Rp0";
+      return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0, maximumFractionDigits: 2 }).format(angka);
+    };
+
+    const formatSatuan = (angka = 0, satuan = "") => {
+      if (typeof angka !== 'number' || !Number.isFinite(angka)) return "";
+      const angkaRapi = angka.toLocaleString('id-ID');
+      if (!satuan) return angkaRapi;
+      const satuanBerpangkat = satuan.replace(/([+-]?\d+)$/, '^{$1}');
+      return `${angkaRapi} \\text{ ${satuanBerpangkat}}`;
+    };
+
+    const dfung = (f, x, opsi = {}) => {
+      // 1. Validasi Tipe Data dan Kelayakan Input
+      if (typeof f !== 'function') {
+        throw new Error("MATEMATIKIN [dfung]: Parameter pertama harus berupa fungsi (Function).");
+      }
+      if (typeof x !== 'number' || !Number.isFinite(x)) {
+        throw new Error("MATEMATIKIN [dfung]: Titik evaluasi (x) harus berupa bilangan terhingga (Finite Number).");
+      }
+
+      // 2. Gunakan pangkat 2 (1/8192 = 2^-13 ≈ 1.22e-4) agar eksak dalam biner IEEE-754
+      const h = opsi.h || ((1 / 8192) * Math.max(1, Math.abs(x)));
+
+      try {
+        // 3. Evaluasi fungsi pada empat titik berdekatan secara simetris
+        const f_min2h = f(x - 2 * h);
+        const f_min1h = f(x - h);
+        const f_plus1h = f(x + h);
+        const f_plus2h = f(x + 2 * h);
+
+        // 4. Deteksi Anomali Asimtot
+        if (
+          !Number.isFinite(f_min2h) ||
+          !Number.isFinite(f_min1h) ||
+          !Number.isFinite(f_plus1h) ||
+          !Number.isFinite(f_plus2h)
+        ) {
+          return NaN;
+        }
+
+        // 5. Eksekusi Rumus Utama (5-Point Stencil Derivative)
+        const turunan = (-f_plus2h + 8 * f_plus1h - 8 * f_min1h + f_min2h) / (12 * h);
+
+        // 6. Koreksi Presisi (Membulatkan angka bising mikroskopis menjadi 0 murni)
+        if (Math.abs(turunan) < 1e-12) return 0;
+
+        // 7. Bersihkan sisa derau floating-point (konsisten dengan fungsi integral & _rapikan)
+        return _rapikan(turunan);
+      } catch (error) {
+        throw new Error(`MATEMATIKIN [dfung]: Terjadi kesalahan saat mengevaluasi fungsi. Detail: ${error.message}`);
+      }
+    };
+
+    const mod = (n, m) => {
+      if (m === 0) throw new Error("MATEMATIKIN: Modulo (pembagi) tidak boleh nol.");
+      return ((n % m) + m) % m;
+    };
+
+    const akarKuadrat = (a, b, c) => {
+      const D = diskriminan(a, b, c);
+      if (D < 0) return [];
+      if (D === 0) {
+        const x = -b / (2 * a);
+        return [x === -0 ? 0 : x];
+      }
+      const akarD = Math.sqrt(D);
+      const q = -0.5 * (b + (b < 0 ? -akarD : akarD));
+      const x1 = q / a, x2 = c / q;
+      return [Math.min(x1, x2) + 0, Math.max(x1, x2) + 0];
+    };
+
+    const rad = (derajat) => typeof derajat !== 'number' ? NaN : (derajat * PI) / 180;
+    const derajat = (radian) => typeof radian !== 'number' ? NaN : (radian * 180) / PI;
+
+    const _transformasiTitik = (titik, fungsi) => {
+      const [x, y, ...sisa] = _keArrayTitik(titik);
+      _pastikanAngka(x, y);
+      const [xBaru, yBaru] = fungsi(x, y);
+      return _keFormatTitik([_rapikan(xBaru), _rapikan(yBaru), ...sisa], titik);
+    };
+
+    const translasi = (titik, dx, dy) => {
+      if (_adalahTitik(dx)) [dx, dy] = _keArrayTitik(dx);
+      _pastikanAngka(dx, dy);
+      return _transformasiTitik(titik, (x, y) => [x + dx, y + dy]);
+    };
+
+    const dilatasi = (titik, k, pusat = [0, 0]) => {
+      const [px, py] = _keArrayTitik(pusat);
+      _pastikanAngka(k, px, py);
+      return _transformasiTitik(titik, (x, y) => [px + k * (x - px), py + k * (y - py)]);
+    };
+
+    const rotasi = (titik, sudut, pusat = [0, 0]) => {
+      const [px, py] = _keArrayTitik(pusat);
+      _pastikanAngka(sudut, px, py);
+      const cosSudut = cos(sudut), sinSudut = sin(sudut);
+      return _transformasiTitik(titik, (x, y) => {
+        const dx = x - px, dy = y - py;
+        return [px + dx * cosSudut - dy * sinSudut, py + dx * sinSudut + dy * cosSudut];
+      });
+    };
+
+    const refleksi = (titik, cermin) => {
+      if (typeof cermin === 'string') {
+        const aturan = {
+          'sumbu-x': (x, y) => [x, -y], 'sumbux': (x, y) => [x, -y], 'y=0': (x, y) => [x, -y],
+          'sumbu-y': (x, y) => [-x, y], 'sumbuy': (x, y) => [-x, y], 'x=0': (x, y) => [-x, y],
+          'y=x': (x, y) => [y, x], 'y=-x': (x, y) => [-y, -x],
+          'asal': (x, y) => [-x, -y], 'titikasal': (x, y) => [-x, -y]
+        };
+        const fungsi = aturan[cermin.toLowerCase().replace(/\s+/g, '')];
+        if (!fungsi) throw new Error("MATEMATIKIN: Cermin tidak dikenali.");
+        return _transformasiTitik(titik, fungsi);
+      }
+      if (_adalahTitik(cermin)) {
+        const [px, py] = _keArrayTitik(cermin);
+        _pastikanAngka(px, py);
+        return _transformasiTitik(titik, (x, y) => [2 * px - x, 2 * py - y]);
+      }
+      if (cermin !== null && typeof cermin === 'object') {
+        const { x: kx, y: ky, m, c = 0 } = cermin;
+        if (m === undefined && typeof kx === 'number' && ky === undefined) return _transformasiTitik(titik, (x, y) => [2 * kx - x, y]);
+        if (m === undefined && typeof ky === 'number' && kx === undefined) return _transformasiTitik(titik, (x, y) => [x, 2 * ky - y]);
+        if (typeof m === 'number') {
+          _pastikanAngka(m, c);
+          return _transformasiTitik(titik, (x, y) => {
+            const d = (x + (y - c) * m) / (1 + m * m);
+            return [2 * d - x, 2 * (d * m + c) - y];
+          });
+        }
+      }
+      throw new Error("MATEMATIKIN: Cermin tidak valid.");
+    };
+
+    const _koefisienGaris = (titik1, titik2) => {
+      const [x1, y1] = _keArrayTitik(titik1);
+      const [x2, y2] = _keArrayTitik(titik2);
+      _pastikanAngka(x1, y1, x2, y2);
+      if (x1 === x2 && y1 === y2) throw new Error("MATEMATIKIN: Dua titik harus berbeda untuk membentuk sebuah garis.");
+      return { a: y2 - y1, b: x1 - x2, c: x2 * y1 - x1 * y2 };
+    };
+
+    const _sukuAljabar = (n, variabel, pertama) => {
+      if (n === 0) return '';
+      const mutlak = Math.abs(n);
+      const isi = `${(variabel && mutlak === 1) ? '' : mutlak}${variabel}`;
+      if (pertama) return n < 0 ? `-${isi}` : isi;
+      return ` ${n < 0 ? '-' : '+'} ${isi}`;
+    };
+
+    const _nilaiLatex = (pembilang, penyebut) => {
+      if (Number.isInteger(pembilang) && Number.isInteger(penyebut)) return pecahan(pembilang, penyebut);
+      return String(_rapikan(pembilang / penyebut));
+    };
+
+    const persamaanGaris = (titik1, titik2, bentuk = 'umum') => {
+      if (typeof titik2 === 'string') { bentuk = titik2; titik2 = undefined; }
+      [titik1, titik2] = _ambilDuaTitik(titik1, titik2);
+      let { a, b, c } = _koefisienGaris(titik1, titik2);
+      if ([a, b, c].every(Number.isInteger)) {
+        const pembagi = fpb(a, b, c);
+        a /= pembagi; b /= pembagi; c /= pembagi;
+      }
+      if (a < 0 || (a === 0 && b < 0)) { a = -a; b = -b; c = -c; }
+      a = _rapikan(a); b = _rapikan(b); c = _rapikan(c);
+      if (bentuk === 'umum') {
+        return `${_sukuAljabar(a, 'x', true)}${_sukuAljabar(b, 'y', a === 0)}${_sukuAljabar(c, '', false)} = 0`;
+      }
+      if (bentuk === 'gradien') {
+        if (b === 0) return `x = ${_nilaiLatex(-c, a)}`;
+        const m = -a / b, k = -c / b;
+        let suku = '';
+        if (m === 1) suku = 'x';
+        else if (m === -1) suku = '-x';
+        else if (m !== 0) suku = `${_nilaiLatex(-a, b)}x`;
+        if (k !== 0) {
+          const besar = _nilaiLatex(Math.abs(c), Math.abs(b));
+          if (suku === '') suku = k < 0 ? `-${besar}` : besar;
+          else suku += k < 0 ? ` - ${besar}` : ` + ${besar}`;
+        }
+        return `y = ${suku === '' ? '0' : suku}`;
+      }
+      throw new Error("MATEMATIKIN: Bentuk persamaan harus 'umum' atau 'gradien'.");
+    };
+
+    const jarakTitikKeGaris = (titik, garis) => {
+      const [x0, y0] = _keArrayTitik(titik);
+      let a, b, c;
+      if (garis !== null && typeof garis === 'object' && !Array.isArray(garis) && 'a' in garis) {
+        ({ a, b, c = 0 } = garis);
+      } else {
+        const [titik1, titik2] = _keArrayGaris(garis);
+        ({ a, b, c } = _koefisienGaris(titik1, titik2));
+      }
+      _pastikanAngka(x0, y0, a, b, c);
+      const penyebut = Math.hypot(a, b);
+      if (penyebut === 0) throw new Error("MATEMATIKIN: Koefisien a dan b tidak boleh keduanya nol.");
+      return _rapikan(Math.abs(a * x0 + b * y0 + c) / penyebut);
+    };
+
+    const luasPoligon = (...titik) => {
+      if (titik.length === 1 && Array.isArray(titik[0]) && titik[0].length > 0 && titik[0].every(_adalahTitik)) {
+        titik = titik[0];
+      }
+      if (titik.length < 3) throw new Error("MATEMATIKIN: Poligon membutuhkan minimal 3 titik.");
+      const koordinat = titik.map(_keArrayTitik);
+      _pastikanAngka(...koordinat.flatMap(t => [t[0], t[1]]));
+      let jumlahSilang = 0;
+      for (let i = 0; i < koordinat.length; i++) {
+        const [xi, yi] = koordinat[i];
+        const [xj, yj] = koordinat[(i + 1) % koordinat.length];
+        jumlahSilang += xi * yj - xj * yi;
+      }
+      return _rapikan(Math.abs(jumlahSilang) / 2);
+    };
+
+    const luasSegitiga = (titik1, titik2, titik3) => luasPoligon(titik1, titik2, titik3);
+
+    const _pastikanSukuKe = (n) => {
+      if (!Number.isInteger(n) || n < 1) throw new Error("MATEMATIKIN: Suku ke-n harus bilangan bulat positif (n >= 1).");
+    };
+
+    const sukuAritmetika = (a, b, n) => { _pastikanAngka(a, b); _pastikanSukuKe(n); return _rapikan(a + (n - 1) * b); };
+    const jumlahAritmetika = (a, b, n) => { _pastikanAngka(a, b); _pastikanSukuKe(n); return _rapikan(n * (2 * a + (n - 1) * b) / 2); };
+    const sukuGeometri = (a, r, n) => { _pastikanAngka(a, r); _pastikanSukuKe(n); return _rapikan(a * r ** (n - 1)); };
+    const jumlahGeometri = (a, r, n) => {
+      _pastikanAngka(a, r); _pastikanSukuKe(n);
+      if (r === 1) return _rapikan(a * n);
+      return _rapikan(a * (r ** n - 1) / (r - 1));
+    };
+    const jumlahGeometriTakHingga = (a, r) => {
+      _pastikanAngka(a, r);
+      if (!(Math.abs(r) < 1)) throw new Error("MATEMATIKIN: Deret geometri tak hingga hanya konvergen jika |r| < 1.");
+      return _rapikan(a / (1 - r));
+    };
+
+    const _validasiData = (arr, minimal = 1) => {
+      if (!Array.isArray(arr) || arr.length < minimal || !arr.every(n => typeof n === 'number' && Number.isFinite(n))) {
+        throw new Error(`MATEMATIKIN: Data harus berupa array angka terhingga (minimal ${minimal} data).`);
+      }
+    };
+    const _medianUrut = (urut) => {
+      const tengah = Math.floor(urut.length / 2);
+      return urut.length % 2 === 0 ? (urut[tengah - 1] + urut[tengah]) / 2 : urut[tengah];
+    };
+    const _rataMentah = (arr) => arr.reduce((total, n) => total + n, 0) / arr.length;
+
+    const kuartil = (arr, q) => {
+      _validasiData(arr, 2);
+      const urut = [...arr].sort((a, b) => a - b);
+      const tengah = Math.floor(urut.length / 2);
+      const bawah = urut.slice(0, tengah);
+      const atas = urut.slice(urut.length % 2 === 0 ? tengah : tengah + 1);
+      const hasil = {
+        q1: bulatkanDesimal(_medianUrut(bawah), 2),
+        q2: bulatkanDesimal(_medianUrut(urut), 2),
+        q3: bulatkanDesimal(_medianUrut(atas), 2)
+      };
+      if (q === undefined) return hasil;
+      if (![1, 2, 3].includes(q)) throw new Error("MATEMATIKIN: Parameter q harus bernilai 1, 2, atau 3.");
+      return hasil[`q${q}`];
+    };
+
+    const jangkauan = (arr) => {
+      _validasiData(arr, 1);
+      const urut = [...arr].sort((a, b) => a - b);
+      return _rapikan(urut[urut.length - 1] - urut[0]);
+    };
+
+    const jangkauanInterkuartil = (arr) => {
+      const { q1, q3 } = kuartil(arr);
+      return _rapikan(q3 - q1);
+    };
+
+    const simpanganKuartil = (arr) => jangkauanInterkuartil(arr) / 2;
+
+    const simpanganRataRata = (arr) => {
+      _validasiData(arr, 1);
+      const rata = _rataMentah(arr);
+      return bulatkanDesimal(_rataMentah(arr.map(n => Math.abs(n - rata))), 2);
+    };
+
+    const variansSampel = (arr) => {
+      _validasiData(arr, 2);
+      const rata = _rataMentah(arr);
+      const jumlahKuadratSelisih = arr.reduce((total, n) => total + (n - rata) ** 2, 0);
+      return bulatkanDesimal(jumlahKuadratSelisih / (arr.length - 1), 2);
+    };
+
+    const simpanganBakuSampel = (arr) => {
+      _validasiData(arr, 2);
+      const rata = _rataMentah(arr);
+      const jumlahKuadratSelisih = arr.reduce((total, n) => total + (n - rata) ** 2, 0);
+      return bulatkanDesimal(Math.sqrt(jumlahKuadratSelisih / (arr.length - 1)), 2);
+    };
+
+    const _keArrayPecahan = (p) => {
+      let pembilang, penyebut;
+      if (Number.isInteger(p)) [pembilang, penyebut] = [p, 1];
+      else if (Array.isArray(p) && p.length === 2) [pembilang, penyebut] = p;
+      else throw new Error("MATEMATIKIN: Pecahan harus berupa bilangan bulat atau array [pembilang, penyebut].");
+      if (!Number.isInteger(pembilang) || !Number.isInteger(penyebut)) throw new Error("MATEMATIKIN: Pembilang dan penyebut harus bilangan bulat.");
+      if (penyebut === 0) throw new Error("MATEMATIKIN: Penyebut pecahan tidak boleh bernilai nol.");
+      return [pembilang, penyebut];
+    };
+
+    const _sederhanakanPecahan = (pembilang, penyebut) => {
+      if (pembilang === 0) return [0, 1];
+      const pembagi = _fpbDuaAngka(pembilang, penyebut);
+      let [a, b] = [pembilang / pembagi, penyebut / pembagi];
+      if (b < 0) { a = -a; b = -b; }
+      return [a, b];
+    };
+
+    const hitungPecahan = (pecahan1, pecahan2, operasi = 'tambah') => {
+      const [n1, d1] = _keArrayPecahan(pecahan1);
+      const [n2, d2] = _keArrayPecahan(pecahan2);
+      switch (operasi) {
+        case 'tambah':
+        case 'kurang': {
+          const penyebut = _kpkDuaAngka(d1, d2);
+          const tanda = operasi === 'tambah' ? 1 : -1;
+          return _sederhanakanPecahan(n1 * (penyebut / d1) + tanda * n2 * (penyebut / d2), penyebut);
+        }
+        case 'kali': return _sederhanakanPecahan(n1 * n2, d1 * d2);
+        case 'bagi':
+          if (n2 === 0) throw new Error("MATEMATIKIN: Tidak dapat membagi dengan pecahan bernilai nol.");
+          return _sederhanakanPecahan(n1 * d2, d1 * n2);
+        default: throw new Error("MATEMATIKIN: Operasi harus 'tambah', 'kurang', 'kali', atau 'bagi'.");
+      }
+    };
+
+    const operasiPecahan = (pecahan1, pecahan2, operasi = 'tambah') => {
+      const [pembilang, penyebut] = hitungPecahan(pecahan1, pecahan2, operasi);
+      return pecahan(pembilang, penyebut);
+    };
+
+    const desimalKePecahan = (desimal, opsi = {}) => {
+      if (typeof desimal !== 'number' || !Number.isFinite(desimal)) throw new Error("MATEMATIKIN: Input harus berupa angka terhingga.");
+      const maksPenyebut = opsi.maksPenyebut === undefined ? 1e6 : opsi.maksPenyebut;
+      const tanda = desimal < 0 ? -1 : 1;
+      const x = Math.abs(desimal);
+      const toleransi = (opsi.toleransi === undefined ? 1e-14 : opsi.toleransi) * Math.max(1, x);
+      let hasil;
+      if (Number.isInteger(x)) {
+        hasil = [tanda * x + 0, 1];
+      } else {
+        let pKemarin = 1, qKemarin = 0;
+        let bulatan = Math.floor(x);
+        let p = bulatan, q = 1;
+        let sisa = x - bulatan;
+        while (sisa > 1e-15 && Math.abs(x - p / q) > toleransi) {
+          const kebalikan = 1 / sisa;
+          bulatan = Math.floor(kebalikan);
+          sisa = kebalikan - bulatan;
+          const pBaru = bulatan * p + pKemarin;
+          const qBaru = bulatan * q + qKemarin;
+          if (qBaru > maksPenyebut) break;
+          [pKemarin, qKemarin, p, q] = [p, q, pBaru, qBaru];
+        }
+        hasil = [tanda * p + 0, q];
+      }
+      return opsi.latex === true ? pecahan(hasil[0], hasil[1]) : hasil;
+    };
+
+    const integral = (f, a, b, opsi = {}) => {
+      if (typeof f !== 'function') throw new Error("MATEMATIKIN [integral]: Parameter pertama harus berupa fungsi.");
+      _pastikanAngka(a, b);
+      if (a === b) return 0;
+      let n = opsi.n === undefined ? 1000 : opsi.n;
+      if (!Number.isInteger(n) || n < 2) throw new Error("MATEMATIKIN [integral]: opsi.n harus bilangan bulat minimal 2.");
+      if (n % 2 !== 0) n++;
+      const h = (b - a) / n;
+      let jumlahGanjil = 0, jumlahGenap = 0;
+      for (let i = 1; i < n; i++) {
+        const nilai = f(a + i * h);
+        if (i % 2 === 0) jumlahGenap += nilai;
+        else jumlahGanjil += nilai;
+      }
+      const total = (h / 3) * (f(a) + f(b) + 4 * jumlahGanjil + 2 * jumlahGenap);
+      if (!Number.isFinite(total)) return NaN;
+      return Number(total.toPrecision(12)) + 0;
+    };
+
+    const logaritma = (basis, numerus) => {
+      if (typeof basis !== 'number' || typeof numerus !== 'number' || !Number.isFinite(basis) || !Number.isFinite(numerus)) {
+        throw new Error("MATEMATIKIN: Basis dan numerus harus berupa angka terhingga.");
+      }
+      if (basis <= 0 || basis === 1) throw new Error("MATEMATIKIN: Basis logaritma harus positif dan tidak sama dengan 1.");
+      if (numerus <= 0) throw new Error("MATEMATIKIN: Numerus logaritma harus lebih besar dari 0.");
+      let hasil = basis === 10 ? Math.log10(numerus) : (basis === 2 ? Math.log2(numerus) : Math.log(numerus) / Math.log(basis));
+      return _rapikan(hasil);
+    };
+
+    const _kataSatuan = ['nol', 'satu', 'dua', 'tiga', 'empat', 'lima', 'enam', 'tujuh', 'delapan', 'sembilan', 'sepuluh', 'sebelas'];
+    const _terbilangTigaDigit = (n) => {
+      const kata = [];
+      const ratus = Math.floor(n / 100), sisa = n % 100;
+      if (ratus === 1) kata.push('seratus');
+      else if (ratus > 1) kata.push(`${_kataSatuan[ratus]} ratus`);
+      if (sisa > 0) {
+        if (sisa < 12) kata.push(_kataSatuan[sisa]);
+        else if (sisa < 20) kata.push(`${_kataSatuan[sisa - 10]} belas`);
+        else {
+          kata.push(`${_kataSatuan[Math.floor(sisa / 10)]} puluh`);
+          if (sisa % 10 > 0) kata.push(_kataSatuan[sisa % 10]);
+        }
+      }
+      return kata.join(' ');
+    };
+    const _terbilangBulat = (n) => {
+      if (n === 0) return 'nol';
+      const skala = ['', 'ribu', 'juta', 'miliar', 'triliun', 'kuadriliun'];
+      const kelompok = [];
+      for (let sisa = n; sisa > 0; sisa = Math.floor(sisa / 1000)) kelompok.push(sisa % 1000);
+      const bagian = [];
+      for (let i = kelompok.length - 1; i >= 0; i--) {
+        if (kelompok[i] === 0) continue;
+        if (i === 1 && kelompok[i] === 1) bagian.push('seribu');
+        else bagian.push(skala[i] ? `${_terbilangTigaDigit(kelompok[i])} ${skala[i]}` : _terbilangTigaDigit(kelompok[i]));
+      }
+      return bagian.join(' ');
+    };
+    const terbilang = (n) => {
+      if (typeof n !== 'number' || !Number.isFinite(n)) throw new Error("MATEMATIKIN: Input harus berupa angka terhingga.");
+      const teks = String(Math.abs(n));
+      if (teks.includes('e')) throw new Error("MATEMATIKIN: Angka terlalu besar atau terlalu kecil untuk dieja.");
+      const [bagianBulat, bagianDesimal] = teks.split('.');
+      if (Number(bagianBulat) > Number.MAX_SAFE_INTEGER) throw new Error("MATEMATIKIN: Angka melebihi batas aman integer.");
+      let hasil = _terbilangBulat(Number(bagianBulat));
+      if (bagianDesimal) hasil += ` koma ${[...bagianDesimal].map(digit => _kataSatuan[Number(digit)]).join(' ')}`;
+      return n < 0 ? `minus ${hasil}` : hasil;
+    };
+
+    window.Matematikin = {
+      PI, E, PHI, cekBulat, cekBilKuadrat, faktorPrimaTerkecil,
+      cekPrima, faktorisasiPrima, primaBerikutnya, primaKembarBerikutnya, primaKuadrupletBerikutnya, faktorial,
+      daftarFaktorPrima, fpb, kpk, faktorKuadratTerbesar, diskriminan, bilBulatAcak,
+      determinan, matriksMinor, matriksKofaktor, transpose, adjoin, kaliMatriks,
+      invers, bentukMatriks, jumlah, jumlahKuadrat, panjangVektor, dotVektor,
+      crossVektor, proyeksiVektor, proyeksiSkalar, sudutVektor, vektorSatuan, aritmetikaVektor,
+      sederhanakanAkar, acakAntara, acakTanda, pecahan, koefisien, formatKonstanta,
+      formatSuku, deretTanpaNol, kurungNegatif, acakMinus, deretBilBul, acakArray,
+      pilihAcak, pilihSebagian, acakDerangement, sin, cos, tan,
+      csc, sec, ctg, arcsin, arccos, arctan,
+      buattabelsoal, arrayBukit, arrayLembah, formatRibuan, panjangGaris, titikPotong,
+      titikBagiGaris, titikTengah, pusatLingkaran3Titik, jariLingkaran3Titik, gradien, titikBerat,
+      kombinasi, C, permutasi, P, jabarFaktorial, bulatkanDesimal,
+      mean, median, modus, varians, simpanganBaku, buatOpsiGanda,
+      formatRupiah, formatSatuan, dfung, mod, akarKuadrat, rad,
+      derajat, translasi, dilatasi, rotasi, refleksi, persamaanGaris,
+      jarakTitikKeGaris, luasPoligon, luasSegitiga, sukuAritmetika, jumlahAritmetika, sukuGeometri,
+      jumlahGeometri, jumlahGeometriTakHingga, kuartil, jangkauan, jangkauanInterkuartil, simpanganKuartil,
+      simpanganRataRata, variansSampel, simpanganBakuSampel, hitungPecahan, operasiPecahan, desimalKePecahan,
+      integral, logaritma, terbilang
+    };
+  </script>
+
+  <!-- ===================================================================== -->
+  <!-- BASIS DATA DOKUMENTASI LENGKAP (14 KATEGORI • 107 KONSTANTA & FUNGSI) -->
+  <!-- ===================================================================== -->
+  <script>
+    const DOCS_DATA = [
+      // =====================================================================
+      // KATEGORI 0: MEMULAI & INSTALASI
+      // =====================================================================
+      {
+        id: "memulai",
+        judul: "0. Memulai & Instalasi",
+        deskripsi: "Panduan pengenalan matematikin.js v0.0.1 beta, instalasi via CDN jsDelivr (standar & minified), penggunaan di Node.js/Browser, serta saluran kontribusi GitHub.",
+        halamanKhusus: [
+          {
+            id: "pengenalan",
+            nama: "Pengenalan & Instalasi (CDN)",
+            kontenHTML: `
+              <span class="breadcrumb">Memulai & Instalasi</span>
+              <h1>Dokumentasi Resmi matematikin.js <span class="badge-beta" style="font-size:0.9rem;vertical-align:middle;">v0.0.1 beta</span></h1>
+              <p class="lead"><strong>matematikin.js</strong> adalah pustaka JavaScript komputasi matematika, aljabar, geometri analitik, matriks, vektor, statistika, kalkulus numerik, dan generator soal otomatis berbahasa Indonesia yang dirancang khusus untuk pendidik, pengembang aplikasi edukasi, dan pelajar.</p>
+
+              <div class="beta-callout">
+                <strong>🚧 Status Rilis: v0.0.1 beta (Terbuka untuk Masukan & Kritik)</strong>
+                <p style="margin:0.4rem 0 0.5rem;color:#92400e;">Versi terbaru saat ini adalah <strong>v0.0.1 beta</strong> dan belum dijadikan rilis final karena kami sangat membutuhkan <strong>masukan, saran, ide fitur baru, maupun kritik</strong> dari rekan-rekan pengembang dan pendidik agar pustaka ini menjadi lebih sempurna.</p>
+                <a href="https://github.com/KulikMath/matematikin" target="_blank" rel="noopener noreferrer" class="btn-github">
+                  ⭐ Kunjungi & Beri Masukan di GitHub (KulikMath/matematikin)
+                </a>
+              </div>
+
+              <div class="info-callout">
+                <strong>💡 Keunggulan Utama matematikin.js:</strong>
+                <ul style="margin-left:1.25rem;margin-top:0.35rem;">
+                  <li><strong>100% Berbahasa Indonesia:</strong> Nama fungsi intuitif sesuai istilah kurikulum Indonesia (<code>fpb</code>, <code>kpk</code>, <code>persamaanGaris</code>, <code>simpanganBaku</code>, <code>terbilang</code>).</li>
+                  <li><strong>Siap LaTeX / MathJax / KaTeX:</strong> Fungsi seperti <code>pecahan()</code>, <code>sederhanakanAkar()</code>, <code>bentukMatriks()</code>, dan <code>persamaanGaris()</code> menghasilkan kode LaTeX bersih.</li>
+                  <li><strong>Generator Soal Cerdas:</strong> Dilengkapi pengacak bebas nol (<code>deretTanpaNol</code>), pemformat suku aljabar (<code>koefisien</code>, <code>formatSuku</code>), dan pembuat pengecoh pilihan ganda otomatis (<code>buatOpsiGanda</code>).</li>
+                  <li><strong>Bebas Anomali Floating-Point:</strong> Trigonometri derajat dan pembulatan desimal sudah dilengkapi penawar *floating-point noise* JavaScript.</li>
+                </ul>
+              </div>
+
+              <h2>1. Instalasi via CDN jsDelivr</h2>
+              <p>Anda dapat memuat <strong>matematikin.js</strong> langsung di halaman HTML menggunakan layanan CDN <strong>jsDelivr</strong>. Tersedia versi standar (untuk pengembangan) maupun versi terkompresi <code>.min.js</code> (untuk produksi):</p>
+              
+              <h3>A. Versi Standar (<code>matematikin.js</code>)</h3>
+              <pre><code>&lt;!-- Memuat versi terbaru (cabang utama) --&gt;
+&lt;script src="https://cdn.jsdelivr.net/gh/KulikMath/matematikin/matematikin.js"&gt;&lt;/script&gt;
+
+&lt;!-- Atau mengunci pada rilis v0.0.1-beta --&gt;
+&lt;script src="https://cdn.jsdelivr.net/gh/KulikMath/matematikin@v0.0.1-beta/matematikin.js"&gt;&lt;/script&gt;</code></pre>
+
+              <h3>B. Versi Minified / Produksi (<code>matematikin.min.js</code>)</h3>
+              <pre><code>&lt;!-- Otomatis di-minify oleh jsDelivr (Ukuran lebih kecil & cepat dimuat) --&gt;
+&lt;script src="https://cdn.jsdelivr.net/gh/KulikMath/matematikin/matematikin.min.js"&gt;&lt;/script&gt;
+
+&lt;!-- Versi spesifik v0.0.1-beta minified --&gt;
+&lt;script src="https://cdn.jsdelivr.net/gh/KulikMath/matematikin@v0.0.1-beta/matematikin.min.js"&gt;&lt;/script&gt;</code></pre>
+
+              <h2>2. Cara Penggunaan di Browser & Node.js</h2>
+              <p>Saat dimuat di <strong>Browser</strong>, seluruh fungsi dapat dipanggil secara langsung (global) maupun melalui namespace objek <code>Matematikin</code>:</p>
+              <pre><code>&lt;script src="https://cdn.jsdelivr.net/gh/KulikMath/matematikin/matematikin.min.js"&gt;&lt;/script&gt;
+&lt;script&gt;
+  // Memanggil fungsi secara langsung (Global)
+  console.log(fpb(24, 36, 60));         // Output: 12
+  console.log(pecahan(6, 8));           // Output: "\\dfrac{3}{4}"
+  console.log(sin(30));                 // Output: 0.5
+
+  // Atau melalui objek namespace Matematikin
+  console.log(Matematikin.terbilang(2026)); // Output: "dua ribu dua puluh enam"
+&lt;/script&gt;</code></pre>
+
+              <p>Saat digunakan di <strong>Node.js / CommonJS Bundler</strong>, impor modul menggunakan <code>require()</code>:</p>
+              <pre><code>const { fpb, kpk, determinan, buatOpsiGanda } = require('./matematikin.js');
+
+console.log(kpk(12, 15, 20)); // 60
+console.log(determinan([[4, 2], [3, 5]])); // 14</code></pre>
+
+              <h2>3. Tautan Repositori & Kontribusi</h2>
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr><th>Sumber Daya</th><th>Tautan / Informasi</th></tr>
+                  </thead>
+                  <tbody>
+                    <tr><td><strong>Repositori GitHub Resmi</strong></td><td><a href="https://github.com/KulikMath/matematikin" target="_blank">https://github.com/KulikMath/matematikin</a></td></tr>
+                    <tr><td><strong>Versi Saat Ini</strong></td><td><code>v0.0.1 beta</code> (Tahap uji coba publik & pengumpulan umpan balik)</td></tr>
+                    <tr><td><strong>CDN Standar</strong></td><td><code>https://cdn.jsdelivr.net/gh/KulikMath/matematikin/matematikin.js</code></td></tr>
+                    <tr><td><strong>CDN Minified</strong></td><td><code>https://cdn.jsdelivr.net/gh/KulikMath/matematikin/matematikin.min.js</code></td></tr>
+                    <tr><td><strong>Kirim Saran / Laporan Bug</strong></td><td>Buka tab <em>Issues</em> atau <em>Discussions</em> di <a href="https://github.com/KulikMath/matematikin/issues" target="_blank">GitHub KulikMath/matematikin</a></td></tr>
+                  </tbody>
+                </table>
+              </div>
+            `
+          }
+        ],
+        fungsi: []
+      },
+
+      // =====================================================================
+      // KATEGORI 1: KONSTANTA & VALIDASI DASAR
+      // =====================================================================
+      {
+        id: "konstanta-validasi",
+        judul: "1. Konstanta & Validasi Dasar",
+        deskripsi: "Konstanta matematika fundamental (PI, E, PHI) serta fungsi pemeriksaan sifat bilangan bulat, kuadrat sempurna, modulo sejati, dan pembulatan presisi.",
+        fungsi: [
+          {
+            id: "PI",
+            nama: "PI, E, PHI",
+            ringkasan: "Tiga konstanta matematika utama: PI (π ≈ 3.14159...), E (Bilangan Euler e ≈ 2.71828...), dan PHI (Rasio Emas φ ≈ 1.61803...).",
+            sintaks: `PI   // 3.141592653589793\nE    // 2.718281828459045\nPHI  // 1.618033988749895`,
+            parameter: [],
+            opsi: [],
+            contohKode: `console.log("Nilai PI  :", PI);
+console.log("Nilai E   :", E);
+console.log("Nilai PHI :", PHI);
+return { PI, E, PHI };`
+          },
+          {
+            id: "cekBulat",
+            nama: "cekBulat()",
+            ringkasan: "Memeriksa apakah sebuah input n merupakan bilangan bulat (integer) atau bukan.",
+            sintaks: `cekBulat(n) // Mengembalikan boolean (true / false)`,
+            parameter: [
+              { nama: "n", tipe: "number", ket: "Nilai yang ingin diperiksa." }
+            ],
+            opsi: [],
+            contohKode: `console.log("cekBulat(15)   ->", cekBulat(15));
+console.log("cekBulat(-7)   ->", cekBulat(-7));
+console.log("cekBulat(3.14) ->", cekBulat(3.14));
+return cekBulat(42);`
+          },
+          {
+            id: "cekBilKuadrat",
+            nama: "cekBilKuadrat()",
+            ringkasan: "Memeriksa apakah sebuah angka n adalah bilangan kuadrat sempurna non-negatif (0, 1, 4, 9, 16, 25, dst.).",
+            sintaks: `cekBilKuadrat(n) // Mengembalikan boolean (true / false)`,
+            parameter: [
+              { nama: "n", tipe: "number", ket: "Angka yang akan diuji." }
+            ],
+            opsi: [],
+            contohKode: `console.log("cekBilKuadrat(49) ->", cekBilKuadrat(49));
+console.log("cekBilKuadrat(50) ->", cekBilKuadrat(50));
+console.log("cekBilKuadrat(0)  ->", cekBilKuadrat(0));
+return { "49": cekBilKuadrat(49), "50": cekBilKuadrat(50) };`
+          },
+          {
+            id: "mod",
+            nama: "mod()",
+            ringkasan: "Menghitung operasi Modulo Sejati yang selalu menghasilkan sisa bagi positif meskipun angka yang dibagi bernilai negatif (berbeda dengan operator % bawaan JS).",
+            sintaks: `mod(n, m)`,
+            parameter: [
+              { nama: "n", tipe: "number", ket: "Bilangan yang dibagi." },
+              { nama: "m", tipe: "number", ket: "Pembagi modulo (tidak boleh 0)." }
+            ],
+            opsi: [],
+            contohKode: `// Bandingkan dengan (-3 % 12) bawaan JS yang menghasilkan -3:
+console.log("-3 % 12 bawaan JS :", -3 % 12);
+console.log("mod(-3, 12)       :", mod(-3, 12));
+console.log("mod(15, 12)       :", mod(15, 12));
+return mod(-3, 12);`
+          },
+          {
+            id: "bulatkanDesimal",
+            nama: "bulatkanDesimal()",
+            ringkasan: "Membulatkan angka desimal hingga n digit di belakang koma secara akurat menggunakan notasi eksponensial untuk menghindari anomali floating-point.",
+            sintaks: `bulatkanDesimal(angka, desimal = 2)`,
+            parameter: [
+              { nama: "angka", tipe: "number", ket: "Angka desimal yang ingin dibulatkan." },
+              { nama: "desimal", tipe: "number", ket: "Jumlah angka di belakang koma (bawaan: 2)." }
+            ],
+            opsi: [],
+            contohKode: `// Menghindari jebakan 1.005 -> 1.00 pada pembulatan biasa
+console.log("1.005 (2 desimal)   :", bulatkanDesimal(1.005, 2));
+console.log("3.14159 (3 desimal) :", bulatkanDesimal(3.14159, 3));
+return bulatkanDesimal(1.005, 2);`
+          }
+        ]
+      },
+
+      // =====================================================================
+      // KATEGORI 2: TEORI BILANGAN & PRIMA
+      // =====================================================================
+      {
+        id: "teori-bilangan",
+        judul: "2. Teori Bilangan & Prima",
+        deskripsi: "Fungsi-fungsi cepat berbasis Wheel Factorization (lompatan 30) dan Algoritma Euclidean untuk bilangan prima, faktorisasi, FPB, KPK, dan faktor kuadrat.",
+        fungsi: [
+          {
+            id: "cekPrima",
+            nama: "cekPrima()",
+            ringkasan: "Memeriksa secara cepat apakah bilangan bulat n merupakan bilangan prima menggunakan optimasi Wheel Factorization.",
+            sintaks: `cekPrima(n) // Mengembalikan boolean`,
+            parameter: [
+              { nama: "n", tipe: "number", ket: "Bilangan bulat yang akan dicek keprimaannya." }
+            ],
+            opsi: [],
+            contohKode: `console.log("cekPrima(2)   ->", cekPrima(2));
+console.log("cekPrima(97)  ->", cekPrima(97));
+console.log("cekPrima(100) ->", cekPrima(100));
+return { "97": cekPrima(97), "91": cekPrima(91) };`
+          },
+          {
+            id: "faktorPrimaTerkecil",
+            nama: "faktorPrimaTerkecil()",
+            ringkasan: "Mencari bilangan prima terkecil yang membagi habis n.",
+            sintaks: `faktorPrimaTerkecil(n)`,
+            parameter: [
+              { nama: "n", tipe: "number", ket: "Bilangan bulat yang dicari faktor prima terkecilnya." }
+            ],
+            opsi: [],
+            contohKode: `console.log("Faktor prima terkecil 91  :", faktorPrimaTerkecil(91));
+console.log("Faktor prima terkecil 143 :", faktorPrimaTerkecil(143));
+console.log("Faktor prima terkecil 37  :", faktorPrimaTerkecil(37));
+return faktorPrimaTerkecil(91);`
+          },
+          {
+            id: "faktorisasiPrima",
+            nama: "faktorisasiPrima()",
+            ringkasan: "Menguraikan bilangan bulat n menjadi rangkaian string perkalian faktor-faktor primanya.",
+            sintaks: `faktorisasiPrima(n)`,
+            parameter: [
+              { nama: "n", tipe: "number", ket: "Bilangan bulat yang akan difaktorkan." }
+            ],
+            opsi: [],
+            contohKode: `console.log("360  =", faktorisasiPrima(360));
+console.log("1024 =", faktorisasiPrima(1024));
+console.log("-84  =", faktorisasiPrima(-84));
+return faktorisasiPrima(360);`
+          },
+          {
+            id: "daftarFaktorPrima",
+            nama: "daftarFaktorPrima()",
+            ringkasan: "Mengembalikan array berisi seluruh faktor prima dari bilangan bulat positif n (termasuk faktor berulang).",
+            sintaks: `daftarFaktorPrima(n) // Mengembalikan Array<number>`,
+            parameter: [
+              { nama: "n", tipe: "number", ket: "Bilangan bulat positif (>= 1)." }
+            ],
+            opsi: [],
+            contohKode: `const faktor = daftarFaktorPrima(360);
+console.log("Daftar faktor prima 360:", faktor);
+return faktor;`
+          },
+          {
+            id: "primaBerikutnya",
+            nama: "primaBerikutnya()",
+            ringkasan: "Mencari bilangan prima terkecil yang nilainya lebih besar dari n.",
+            sintaks: `primaBerikutnya(n)`,
+            parameter: [
+              { nama: "n", tipe: "number", ket: "Angka batas awal pencarian." }
+            ],
+            opsi: [],
+            contohKode: `console.log("Prima setelah 10  :", primaBerikutnya(10));
+console.log("Prima setelah 100 :", primaBerikutnya(100));
+return primaBerikutnya(100);`
+          },
+          {
+            id: "primaKembarBerikutnya",
+            nama: "primaKembarBerikutnya()",
+            ringkasan: "Mencari anggota terkecil dari pasangan Bilangan Prima Kembar (Twin Primes {p, p+2}) berikutnya yang lebih besar dari n.",
+            sintaks: `primaKembarBerikutnya(n)`,
+            parameter: [
+              { nama: "n", tipe: "number", ket: "Angka batas bawah pencarian." }
+            ],
+            opsi: [],
+            contohKode: `const p = primaKembarBerikutnya(20);
+console.log("Pasangan prima kembar setelah 20:", [p, p + 2]);
+return [p, p + 2];`
+          },
+          {
+            id: "primaKuadrupletBerikutnya",
+            nama: "primaKuadrupletBerikutnya()",
+            ringkasan: "Mencari anggota pertama dari konstelasi Bilangan Prima Kuadruplet ({p, p+2, p+6, p+8}) berikutnya yang lebih besar dari n.",
+            sintaks: `primaKuadrupletBerikutnya(n)`,
+            parameter: [
+              { nama: "n", tipe: "number", ket: "Angka batas bawah pencarian." }
+            ],
+            opsi: [],
+            contohKode: `const p = primaKuadrupletBerikutnya(15);
+const kuadruplet = [p, p + 2, p + 6, p + 8];
+console.log("Kuadruplet prima setelah 15:", kuadruplet);
+return kuadruplet;`
+          },
+          {
+            id: "fpb",
+            nama: "fpb()",
+            ringkasan: "Menghitung Faktor Persekutuan Terbesar (FPB / GCD) dari dua atau lebih bilangan bulat (mendukung argumen berjejer maupun array).",
+            sintaks: `fpb(a, b, ...)\nfpb([a, b, ...])`,
+            parameter: [
+              { nama: "...angka", tipe: "number | Array<number>", ket: "Deret bilangan bulat atau satu array bilangan bulat." }
+            ],
+            opsi: [],
+            contohKode: `console.log("fpb(24, 36, 60)   =", fpb(24, 36, 60));
+console.log("fpb([48, 72, 120]) =", fpb([48, 72, 120]));
+return fpb(24, 36, 60);`
+          },
+          {
+            id: "kpk",
+            nama: "kpk()",
+            ringkasan: "Menghitung Kelipatan Persekutuan Terkecil (KPK / LCM) dari dua atau lebih bilangan bulat.",
+            sintaks: `kpk(a, b, ...)\nkpk([a, b, ...])`,
+            parameter: [
+              { nama: "...angka", tipe: "number | Array<number>", ket: "Deret bilangan bulat atau satu array bilangan bulat." }
+            ],
+            opsi: [],
+            contohKode: `console.log("kpk(12, 15, 20) =", kpk(12, 15, 20));
+console.log("kpk([4, 6, 8])  =", kpk([4, 6, 8]));
+return kpk(12, 15, 20);`
+          },
+          {
+            id: "faktorKuadratTerbesar",
+            nama: "faktorKuadratTerbesar()",
+            ringkasan: "Mencari nilai bilangan bulat terbesar k sedemikian sehingga k² membagi habis n (berguna untuk menyederhanakan bentuk akar).",
+            sintaks: `faktorKuadratTerbesar(n)`,
+            parameter: [
+              { nama: "n", tipe: "number", ket: "Bilangan bulat positif (>= 1)." }
+            ],
+            opsi: [],
+            contohKode: `// 72 = 36 * 2 = (6^2) * 2 -> menghasilkan 6
+const k = faktorKuadratTerbesar(72);
+console.log("faktorKuadratTerbesar(72) =", k);
+return k;`
+          }
+        ]
+      },
+
+      // =====================================================================
+      // KATEGORI 3: ALJABAR, AKAR, LOGARITMA & PENJUMLAHAN
+      // =====================================================================
+      {
+        id: "aljabar-akar",
+        judul: "3. Aljabar, Akar & Logaritma",
+        deskripsi: "Fungsi-fungsi untuk menyelesaikan persamaan kuadrat, menghitung diskriminan, menyederhanakan bentuk akar ke LaTeX, logaritma basis bebas, dan penjumlahan deret.",
+        fungsi: [
+          {
+            id: "diskriminan",
+            nama: "diskriminan()",
+            ringkasan: "Menghitung nilai diskriminan persamaan kuadrat ax² + bx + c = 0 menggunakan rumus D = b² - 4ac.",
+            sintaks: `diskriminan(a, b, c)`,
+            parameter: [
+              { nama: "a", tipe: "number", ket: "Koefisien x² (tidak boleh 0)." },
+              { nama: "b", tipe: "number", ket: "Koefisien x." },
+              { nama: "c", tipe: "number", ket: "Konstanta." }
+            ],
+            opsi: [],
+            contohKode: `// Persamaan: x^2 - 5x + 6 = 0
+const D = diskriminan(1, -5, 6);
+console.log("Diskriminan x^2 - 5x + 6 = 0 adalah:", D);
+return D;`
+          },
+          {
+            id: "akarKuadrat",
+            nama: "akarKuadrat()",
+            ringkasan: "Mencari akar-akar penyelesaian nyata dari persamaan kuadrat ax² + bx + c = 0 secara stabil. Mengembalikan [x1, x2], [x] jika kembar, atau [] jika imajiner.",
+            sintaks: `akarKuadrat(a, b, c)`,
+            parameter: [
+              { nama: "a, b, c", tipe: "number", ket: "Koefisien persamaan kuadrat ax² + bx + c = 0 (a ≠ 0)." }
+            ],
+            opsi: [],
+            contohKode: `console.log("x^2 - 5x + 6 = 0  ->", akarKuadrat(1, -5, 6));
+console.log("x^2 - 6x + 9 = 0  ->", akarKuadrat(1, -6, 9));
+console.log("x^2 + 2x + 5 = 0  ->", akarKuadrat(1, 2, 5));
+return akarKuadrat(1, -5, 6);`
+          },
+          {
+            id: "sederhanakanAkar",
+            nama: "sederhanakanAkar()",
+            ringkasan: "Menyederhanakan bentuk akar √n menjadi string LaTeX berbentuk a\\sqrt{b}.",
+            sintaks: `sederhanakanAkar(n)`,
+            parameter: [
+              { nama: "n", tipe: "number", ket: "Bilangan bulat non-negatif di dalam akar." }
+            ],
+            opsi: [],
+            contohKode: `console.log("Akar 72 :", sederhanakanAkar(72));
+console.log("Akar 49 :", sederhanakanAkar(49));
+console.log("Akar 13 :", sederhanakanAkar(13));
+return "\\\\sqrt{72} = " + sederhanakanAkar(72);`
+          },
+          {
+            id: "logaritma",
+            nama: "logaritma()",
+            ringkasan: "Menghitung nilai logaritma dengan basis dan numerus tertentu (ᵃlog b ditulis logaritma(a, b)), bersih dari noise floating-point.",
+            sintaks: `logaritma(basis, numerus)`,
+            parameter: [
+              { nama: "basis", tipe: "number", ket: "Basis logaritma (harus > 0 dan ≠ 1)." },
+              { nama: "numerus", tipe: "number", ket: "Numerus logaritma (harus > 0)." }
+            ],
+            opsi: [],
+            contohKode: `console.log("2 log 8     =", logaritma(2, 8));
+console.log("3 log 81    =", logaritma(3, 81));
+console.log("10 log 0.01 =", logaritma(10, 0.01));
+return logaritma(3, 81);`
+          },
+          {
+            id: "jumlah",
+            nama: "jumlah()",
+            ringkasan: "Menjumlahkan seluruh angka yang diberikan (menerima argumen berjejer maupun array).",
+            sintaks: `jumlah(a, b, c, ...)\njumlah([a, b, c, ...])`,
+            parameter: [
+              { nama: "...angka", tipe: "number | Array<number>", ket: "Daftar angka yang akan dijumlahkan." }
+            ],
+            opsi: [],
+            contohKode: `console.log("jumlah(10, 20, 30, 40) =", jumlah(10, 20, 30, 40));
+console.log("jumlah([2, 4, 6, 8])   =", jumlah([2, 4, 6, 8]));
+return jumlah(10, 20, 30, 40);`
+          },
+          {
+            id: "jumlahKuadrat",
+            nama: "jumlahKuadrat()",
+            ringkasan: "Menghitung jumlah kuadrat (a² + b² + c² + ...) dari serangkaian angka.",
+            sintaks: `jumlahKuadrat(a, b, ...)\njumlahKuadrat([a, b, ...])`,
+            parameter: [
+              { nama: "...angka", tipe: "number | Array<number>", ket: "Daftar angka yang masing-masing akan dikuadratkan lalu dijumlahkan." }
+            ],
+            opsi: [],
+            contohKode: `// 3^2 + 4^2 = 9 + 16 = 25
+console.log("jumlahKuadrat(3, 4) =", jumlahKuadrat(3, 4));
+console.log("jumlahKuadrat([1, 2, 3]) =", jumlahKuadrat([1, 2, 3]));
+return jumlahKuadrat(3, 4);`
+          }
+        ]
+      },
+
+      // =====================================================================
+      // KATEGORI 4: OPERASI PECAHAN
+      // =====================================================================
+      {
+        id: "pecahan",
+        judul: "4. Operasi Pecahan",
+        deskripsi: "Fungsi untuk menyederhanakan pecahan ke LaTeX, melakukan operasi hitung pecahan (tambah, kurang, kali, bagi), serta mengubah desimal menjadi pecahan.",
+        fungsi: [
+          {
+            id: "pecahan",
+            nama: "pecahan()",
+            ringkasan: "Menyederhanakan pecahan pembilang/penyebut dan mengembalikannya dalam format LaTeX \\dfrac{a}{b} dengan tanda minus di posisi proporsional.",
+            sintaks: `pecahan(pembilang, penyebut)`,
+            parameter: [
+              { nama: "pembilang", tipe: "number", ket: "Bilangan bulat pembilang." },
+              { nama: "penyebut", tipe: "number", ket: "Bilangan bulat penyebut (tidak boleh 0)." }
+            ],
+            opsi: [],
+            contohKode: `console.log("pecahan(12, -18) ->", pecahan(12, -18));
+console.log("pecahan(15, 5)   ->", pecahan(15, 5));
+return pecahan(12, -18);`
+          },
+          {
+            id: "hitungPecahan",
+            nama: "hitungPecahan()",
+            ringkasan: "Menghitung operasi dua pecahan ('tambah', 'kurang', 'kali', 'bagi') dan mengembalikan array [pembilang, penyebut] paling sederhana.",
+            sintaks: `hitungPecahan(pecahan1, pecahan2, operasi = 'tambah')`,
+            parameter: [
+              { nama: "pecahan1, pecahan2", tipe: "Array<number> | number", ket: "Pecahan berbentuk [pembilang, penyebut] atau bilangan bulat." },
+              { nama: "operasi", tipe: "'tambah' | 'kurang' | 'kali' | 'bagi'", ket: "Jenis operasi aritmetika pecahan (bawaan: 'tambah')." }
+            ],
+            opsi: [],
+            contohKode: `console.log("1/2 + 1/3 =", hitungPecahan([1, 2], [1, 3], 'tambah'));
+console.log("3/4 - 1/6 =", hitungPecahan([3, 4], [1, 6], 'kurang'));
+console.log("2/3 * 9/4 =", hitungPecahan([2, 3], [9, 4], 'kali'));
+return hitungPecahan([1, 2], [1, 3], 'tambah');`
+          },
+          {
+            id: "operasiPecahan",
+            nama: "operasiPecahan()",
+            ringkasan: "Menghitung operasi dua pecahan dan langsung mengembalikan hasilnya sebagai string LaTeX \\dfrac{a}{b}.",
+            sintaks: `operasiPecahan(pecahan1, pecahan2, operasi = 'tambah')`,
+            parameter: [
+              { nama: "pecahan1, pecahan2", tipe: "Array<number> | number", ket: "Pecahan [pembilang, penyebut] atau bilangan bulat." },
+              { nama: "operasi", tipe: "'tambah' | 'kurang' | 'kali' | 'bagi'", ket: "Jenis operasi pecahan." }
+            ],
+            opsi: [],
+            contohKode: `const hasilLatex = operasiPecahan([1, 2], [1, 3], 'tambah');
+console.log("Hasil LaTeX:", hasilLatex);
+return "\\\\dfrac{1}{2} + \\\\dfrac{1}{3} = " + hasilLatex;`
+          },
+          {
+            id: "desimalKePecahan",
+            nama: "desimalKePecahan()",
+            ringkasan: "Mengubah bilangan desimal (termasuk desimal berulang seperti 1/3) menjadi pecahan paling sederhana [pembilang, penyebut] atau LaTeX.",
+            sintaks: `desimalKePecahan(desimal, opsi = {})`,
+            parameter: [
+              { nama: "desimal", tipe: "number", ket: "Angka desimal yang ingin dikonversi." },
+              { nama: "opsi", tipe: "Object", ket: "Pengaturan konversi pecahan." }
+            ],
+            opsi: [
+              { nama: "latex", tipe: "boolean", bawaan: "false", ket: "Jika true, mengembalikan string LaTeX \\dfrac{a}{b}." },
+              { nama: "maksPenyebut", tipe: "number", bawaan: "1e6", ket: "Batas maksimum nilai penyebut." },
+              { nama: "toleransi", tipe: "number", bawaan: "1e-14", ket: "Toleransi galat relatif pecahan berlanjut." }
+            ],
+            contohKode: `console.log("0.75       ->", desimalKePecahan(0.75));
+console.log("1/3        ->", desimalKePecahan(1 / 3));
+console.log("0.375 LaTeX->", desimalKePecahan(0.375, { latex: true }));
+return "0,375 = " + desimalKePecahan(0.375, { latex: true });`
+          }
+        ]
+      },
+
+      // =====================================================================
+      // KATEGORI 5: MATRIKS
+      // =====================================================================
+      {
+        id: "matriks",
+        judul: "5. Matriks",
+        deskripsi: "Operasi aljabar linear matriks 2D: determinan, minor, kofaktor, transpose, adjoin, perkalian skalar & matriks, invers, serta konversi ke pmatrix LaTeX.",
+        fungsi: [
+          {
+            id: "determinan",
+            nama: "determinan()",
+            ringkasan: "Menghitung determinan matriks persegi berukuran N × N.",
+            sintaks: `determinan(matriks)`,
+            parameter: [
+              { nama: "matriks", tipe: "Array<Array<number>>", ket: "Array 2 dimensi berukuran persegi (jumlah baris = jumlah kolom)." }
+            ],
+            opsi: [],
+            contohKode: `const M = [
+  [2, 1, 3],
+  [0, 4, 1],
+  [5, 2, 0]
+];
+const det = determinan(M);
+console.log("Determinan M =", det);
+return det;`
+          },
+          {
+            id: "matriksMinor",
+            nama: "matriksMinor()",
+            ringkasan: "Menghasilkan Matriks Minor dari sebuah matriks persegi N × N.",
+            sintaks: `matriksMinor(matriks)`,
+            parameter: [
+              { nama: "matriks", tipe: "Array<Array<number>>", ket: "Matriks persegi." }
+            ],
+            opsi: [],
+            contohKode: `const A = [[1, 2], [3, 4]];
+console.log("Minor A:", matriksMinor(A));
+return bentukMatriks(matriksMinor(A));`
+          },
+          {
+            id: "matriksKofaktor",
+            nama: "matriksKofaktor()",
+            ringkasan: "Menghasilkan Matriks Kofaktor (minor yang telah dikalikan tanda papan catur (-1)^(i+j)).",
+            sintaks: `matriksKofaktor(matriks)`,
+            parameter: [
+              { nama: "matriks", tipe: "Array<Array<number>>", ket: "Matriks persegi." }
+            ],
+            opsi: [],
+            contohKode: `const A = [[1, 2, 3], [0, 4, 5], [1, 0, 6]];
+const kof = matriksKofaktor(A);
+console.log("Kofaktor A:", kof);
+return bentukMatriks(kof);`
+          },
+          {
+            id: "transpose",
+            nama: "transpose()",
+            ringkasan: "Melakukan transpose matriks (mengubah baris menjadi kolom dan sebaliknya) untuk matriks M × N.",
+            sintaks: `transpose(matriks)`,
+            parameter: [
+              { nama: "matriks", tipe: "Array<Array<number>>", ket: "Matriks 2D." }
+            ],
+            opsi: [],
+            contohKode: `const M = [[1, 2, 3], [4, 5, 6]];
+const T = transpose(M);
+console.log("Transpose:", T);
+return bentukMatriks(M) + "^T = " + bentukMatriks(T);`
+          },
+          {
+            id: "adjoin",
+            nama: "adjoin()",
+            ringkasan: "Menghasilkan Matriks Adjoin (transpose dari matriks kofaktor) dari matriks persegi.",
+            sintaks: `adjoin(matriks)`,
+            parameter: [
+              { nama: "matriks", tipe: "Array<Array<number>>", ket: "Matriks persegi." }
+            ],
+            opsi: [],
+            contohKode: `const A = [[4, 7], [2, 6]];
+console.log("Adjoin A:", adjoin(A));
+return "\\\\text{adj}(A) = " + bentukMatriks(adjoin(A));`
+          },
+          {
+            id: "kaliMatriks",
+            nama: "kaliMatriks()",
+            ringkasan: "Melakukan perkalian Skalar × Matriks atau Matriks × Matriks.",
+            sintaks: `kaliMatriks(skalar, matriks)\nkaliMatriks(matriksA, matriksB)`,
+            parameter: [
+              { nama: "pengali", tipe: "number | Array<Array<number>>", ket: "Angka skalar atau matriks pertama." },
+              { nama: "matriks", tipe: "Array<Array<number>>", ket: "Matriks kedua." }
+            ],
+            opsi: [],
+            contohKode: `const A = [[1, 2], [3, 4]];
+const B = [[2, 0], [1, 3]];
+const hasil = kaliMatriks(A, B);
+console.log("A x B =", hasil);
+return bentukMatriks(A) + bentukMatriks(B) + " = " + bentukMatriks(hasil);`
+          },
+          {
+            id: "invers",
+            nama: "invers()",
+            ringkasan: "Menghitung matriks invers (A⁻¹) dari sebuah matriks persegi non-singular (determinan ≠ 0).",
+            sintaks: `invers(matriks)`,
+            parameter: [
+              { nama: "matriks", tipe: "Array<Array<number>>", ket: "Matriks persegi dengan determinan tidak nol." }
+            ],
+            opsi: [],
+            contohKode: `const A = [[4, 7], [2, 6]];
+const inv = invers(A);
+console.log("Invers A:", inv);
+return "A^{-1} = " + bentukMatriks(inv);`
+          },
+          {
+            id: "bentukMatriks",
+            nama: "bentukMatriks()",
+            ringkasan: "Mengubah array 2D matriks menjadi string LaTeX berformat \\begin{pmatrix} ... \\end{pmatrix}.",
+            sintaks: `bentukMatriks(matriks)`,
+            parameter: [
+              { nama: "matriks", tipe: "Array<Array<any>>", ket: "Array 2D matriks." }
+            ],
+            opsi: [],
+            contohKode: `const M = [[1, -2, 3], [4, 0, -5]];
+const latex = bentukMatriks(M);
+console.log("Kode LaTeX:", latex);
+return "M = " + latex;`
+          }
+        ]
+      },
+
+      // =====================================================================
+      // KATEGORI 6: VEKTOR
+      // =====================================================================
+      {
+        id: "vektor",
+        judul: "6. Vektor",
+        deskripsi: "Operasi vektor 2D, 3D, hingga n-dimensi: panjang vektor, dot product, cross product, proyeksi vektor & skalar, sudut antar vektor, dan vektor satuan.",
+        fungsi: [
+          {
+            id: "panjangVektor",
+            nama: "panjangVektor()",
+            ringkasan: "Menghitung panjang (magnitudo) dari sebuah vektor n-dimensi.",
+            sintaks: `panjangVektor([x, y, z])\npanjangVektor(x, y, z)`,
+            parameter: [
+              { nama: "...vektor", tipe: "Array<number> | number", ket: "Komponen vektor dalam array atau parameter berjejer." }
+            ],
+            opsi: [],
+            contohKode: `console.log("Panjang [3, 4]       =", panjangVektor([3, 4]));
+console.log("Panjang (2, 3, 6)    =", panjangVektor(2, 3, 6));
+return panjangVektor(2, 3, 6);`
+          },
+          {
+            id: "aritmetikaVektor",
+            nama: "aritmetikaVektor()",
+            ringkasan: "Menjumlahkan atau mengurangkan dua vektor berdimensi sama.",
+            sintaks: `aritmetikaVektor(vektor1, vektor2, operasi = 'tambah')`,
+            parameter: [
+              { nama: "vektor1, vektor2", tipe: "Array<number>", ket: "Dua array vektor berdimensi sama." },
+              { nama: "operasi", tipe: "'tambah' | 'kurang'", ket: "Pilih 'tambah' (bawaan) atau 'kurang'." }
+            ],
+            opsi: [],
+            contohKode: `const u = [4, -2, 5], v = [1, 6, -3];
+console.log("u + v =", aritmetikaVektor(u, v, 'tambah'));
+console.log("u - v =", aritmetikaVektor(u, v, 'kurang'));
+return aritmetikaVektor(u, v, 'tambah');`
+          },
+          {
+            id: "dotVektor",
+            nama: "dotVektor()",
+            ringkasan: "Menghitung hasil kali titik (Dot Product) dari dua buah vektor berdimensi sama.",
+            sintaks: `dotVektor(vektor1, vektor2)`,
+            parameter: [
+              { nama: "vektor1, vektor2", tipe: "Array<number>", ket: "Dua array vektor." }
+            ],
+            opsi: [],
+            contohKode: `const a = [2, 3, -1], b = [4, -1, 5];
+const dot = dotVektor(a, b);
+console.log("a · b =", dot);
+return dot;`
+          },
+          {
+            id: "crossVektor",
+            nama: "crossVektor()",
+            ringkasan: "Menghitung hasil kali silang (Cross Product) dari dua buah vektor 3 dimensi.",
+            sintaks: `crossVektor(vektor1, vektor2)`,
+            parameter: [
+              { nama: "vektor1, vektor2", tipe: "Array<number>", ket: "Dua array vektor 3D [x, y, z]." }
+            ],
+            opsi: [],
+            contohKode: `const i = [1, 0, 0], j = [0, 1, 0];
+const k = crossVektor(i, j);
+console.log("i x j =", k);
+return crossVektor([2, 1, -1], [-3, 4, 1]);`
+          },
+          {
+            id: "proyeksiVektor",
+            nama: "proyeksiVektor()",
+            ringkasan: "Menghitung proyeksi vektor ortogonal dari vektorAsal pada vektorTujuan.",
+            sintaks: `proyeksiVektor(vektorAsal, vektorTujuan)`,
+            parameter: [
+              { nama: "vektorAsal", tipe: "Array<number>", ket: "Vektor yang diproyeksikan." },
+              { nama: "vektorTujuan", tipe: "Array<number>", ket: "Vektor alas proyeksi (bukan vektor nol)." }
+            ],
+            opsi: [],
+            contohKode: `const a = [4, 2], b = [3, 0];
+const proy = proyeksiVektor(a, b);
+console.log("Proyeksi a pada b:", proy);
+return proy;`
+          },
+          {
+            id: "proyeksiSkalar",
+            nama: "proyeksiSkalar()",
+            ringkasan: "Menghitung proyeksi skalar ortogonal (panjang proyeksi bertanda) dari vektorAsal pada vektorTujuan.",
+            sintaks: `proyeksiSkalar(vektorAsal, vektorTujuan)`,
+            parameter: [
+              { nama: "vektorAsal, vektorTujuan", tipe: "Array<number>", ket: "Dua vektor berdimensi sama." }
+            ],
+            opsi: [],
+            contohKode: `const a = [6, 8], b = [1, 0];
+console.log("Proyeksi skalar a pada b:", proyeksiSkalar(a, b));
+return proyeksiSkalar(a, b);`
+          },
+          {
+            id: "sudutVektor",
+            nama: "sudutVektor()",
+            ringkasan: "Menghitung besar sudut (dalam derajat, 0° s.d. 180°) yang dibentuk oleh dua vektor.",
+            sintaks: `sudutVektor(vektor1, vektor2)`,
+            parameter: [
+              { nama: "vektor1, vektor2", tipe: "Array<number>", ket: "Dua vektor bukan nol." }
+            ],
+            opsi: [],
+            contohKode: `const u = [1, 0], v = [1, 1];
+const sudut = sudutVektor(u, v);
+console.log("Sudut antara [1,0] dan [1,1]:", sudut + "°");
+return bulatkanDesimal(sudut, 2);`
+          },
+          {
+            id: "vektorSatuan",
+            nama: "vektorSatuan()",
+            ringkasan: "Menghasilkan vektor satuan (vektor searah dengan panjang 1) dari sebuah vektor.",
+            sintaks: `vektorSatuan(vektor)`,
+            parameter: [
+              { nama: "vektor", tipe: "Array<number>", ket: "Array vektor bukan nol." }
+            ],
+            opsi: [],
+            contohKode: `const u = vektorSatuan([3, 4]);
+console.log("Vektor satuan dari [3, 4]:", u);
+console.log("Panjangnya:", panjangVektor(u));
+return u;`
+          }
+        ]
+      },
+
+      // =====================================================================
+      // KATEGORI 7: TRIGONOMETRI (DERAJAT)
+      // =====================================================================
+      {
+        id: "trigonometri",
+        judul: "7. Trigonometri (Derajat)",
+        deskripsi: "Fungsi trigonometri dan invers trigonometri dalam satuan derajat yang sudah dilengkapi pembulatan presisi 10 desimal untuk menghilangkan galat floating-point.",
+        fungsi: [
+          {
+            id: "sin-cos-tan",
+            nama: "sin(), cos(), tan()",
+            ringkasan: "Menghitung nilai Sinus, Cosinus, dan Tangen dari sudut dalam satuan derajat secara presisi (misal sin(30) = 0.5 dan cos(90) = 0 murni).",
+            sintaks: `sin(derajat)\ncos(derajat)\ntan(derajat)`,
+            parameter: [
+              { nama: "derajat", tipe: "number", ket: "Besar sudut dalam satuan derajat." }
+            ],
+            opsi: [],
+            contohKode: `console.log("sin(30) =", sin(30));
+console.log("cos(90) =", cos(90)); // Murni 0, bukan 6.12e-17!
+console.log("tan(45) =", tan(45));
+return { sin30: sin(30), cos90: cos(90), tan45: tan(45) };`
+          },
+          {
+            id: "csc-sec-ctg",
+            nama: "csc(), sec(), ctg()",
+            ringkasan: "Menghitung nilai Cosecan (1/sin), Secan (1/cos), dan Cotangen (cos/sin) dalam satuan derajat.",
+            sintaks: `csc(derajat)\nsec(derajat)\nctg(derajat)`,
+            parameter: [
+              { nama: "derajat", tipe: "number", ket: "Besar sudut dalam derajat." }
+            ],
+            opsi: [],
+            contohKode: `console.log("csc(30) =", csc(30));
+console.log("sec(60) =", sec(60));
+console.log("ctg(45) =", ctg(45));
+return { csc30: csc(30), sec60: sec(60), ctg45: ctg(45) };`
+          },
+          {
+            id: "arcsin-arccos-arctan",
+            nama: "arcsin(), arccos(), arctan()",
+            ringkasan: "Invers trigonometri yang mengembalikan besar sudut langsung dalam satuan derajat.",
+            sintaks: `arcsin(nilai)\narccos(nilai)\narctan(nilai)`,
+            parameter: [
+              { nama: "nilai", tipe: "number", ket: "Nilai rasio trigonometri (-1 s.d. 1 untuk arcsin & arccos)." }
+            ],
+            opsi: [],
+            contohKode: `console.log("arcsin(0.5) =", arcsin(0.5) + "°");
+console.log("arccos(0.5) =", arccos(0.5) + "°");
+console.log("arctan(1)   =", arctan(1) + "°");
+return { arcsin: arcsin(0.5), arccos: arccos(0.5), arctan: arctan(1) };`
+          },
+          {
+            id: "rad-derajat",
+            nama: "rad() & derajat()",
+            ringkasan: "Mengonversi sudut dari Derajat ke Radian (rad) atau sebaliknya dari Radian ke Derajat (derajat).",
+            sintaks: `rad(derajat)\nderajat(radian)`,
+            parameter: [
+              { nama: "derajat / radian", tipe: "number", ket: "Nilai sudut yang akan dikonversi." }
+            ],
+            opsi: [],
+            contohKode: `console.log("180 derajat ke radian :", rad(180));
+console.log("PI/2 radian ke derajat:", derajat(PI / 2));
+return { rad180: rad(180), degHalfPi: derajat(PI / 2) };`
+          }
+        ]
+      },
+
+      // =====================================================================
+      // KATEGORI 8: GEOMETRI KOORDINAT & ANALITIK
+      // =====================================================================
+      {
+        id: "geometri-analitik",
+        judul: "8. Geometri Koordinat & Analitik",
+        deskripsi: "Perhitungan jarak, titik tengah, pembagian ruas garis, gradien, persamaan garis LaTeX, titik potong, lingkaran 3 titik, dan luas poligon (Shoelace).",
+        fungsi: [
+          {
+            id: "panjangGaris",
+            nama: "panjangGaris()",
+            ringkasan: "Menghitung jarak (panjang ruas garis) antara dua titik koordinat 2D, 3D, maupun n-dimensi. Mendukung format [x, y] maupun {x, y}.",
+            sintaks: `panjangGaris(titik1, titik2)\npanjangGaris([titik1, titik2])`,
+            parameter: [
+              { nama: "titik1, titik2", tipe: "Array | Object", ket: "Dua titik koordinat [x, y] atau {x, y}." }
+            ],
+            opsi: [],
+            contohKode: `console.log("Jarak [0,0] ke [3,4]       :", panjangGaris([0, 0], [3, 4]));
+console.log("Jarak {x:1,y:2} ke {x:4,y:6}:", panjangGaris({ x: 1, y: 2 }, { x: 4, y: 6 }));
+return panjangGaris([0, 0], [3, 4]);`
+          },
+          {
+            id: "titikTengah",
+            nama: "titikTengah()",
+            ringkasan: "Mencari koordinat titik tengah di antara dua titik (mendukung 2D/3D serta mempertahankan format array/objek).",
+            sintaks: `titikTengah(titik1, titik2)`,
+            parameter: [
+              { nama: "titik1, titik2", tipe: "Array | Object", ket: "Dua titik ujung ruas garis." }
+            ],
+            opsi: [],
+            contohKode: `console.log("Titik tengah [2, 4] & [8, 10]:", titikTengah([2, 4], [8, 10]));
+return titikTengah([2, 4], [8, 10]);`
+          },
+          {
+            id: "titikBagiGaris",
+            nama: "titikBagiGaris()",
+            ringkasan: "Mencari koordinat titik yang membagi ruas garis dari titik1 ke titik2 dengan perbandingan m : n.",
+            sintaks: `titikBagiGaris(titik1, titik2, m = 1, n = 1)`,
+            parameter: [
+              { nama: "titik1, titik2", tipe: "Array | Object", ket: "Dua titik ujung ruas garis." },
+              { nama: "m, n", tipe: "number", ket: "Rasio perbandingan m : n." }
+            ],
+            opsi: [],
+            contohKode: `// Membagi ruas A(0,0) ke B(10,5) dengan rasio 2 : 3
+const P = titikBagiGaris([0, 0], [10, 5], 2, 3);
+console.log("Titik bagi P:", P);
+return P;`
+          },
+          {
+            id: "gradien",
+            nama: "gradien()",
+            ringkasan: "Menghitung kemiringan (gradien m) garis yang melalui dua titik.",
+            sintaks: `gradien(titik1, titik2)`,
+            parameter: [
+              { nama: "titik1, titik2", tipe: "Array | Object", ket: "Dua titik pada garis." }
+            ],
+            opsi: [],
+            contohKode: `console.log("Gradien melalui (1,2) dan (3,8):", gradien([1, 2], [3, 8]));
+return gradien([1, 2], [3, 8]);`
+          },
+          {
+            id: "persamaanGaris",
+            nama: "persamaanGaris()",
+            ringkasan: "Menyusun persamaan garis lurus yang melalui dua titik dalam format LaTeX, baik bentuk 'umum' (ax + by + c = 0) maupun 'gradien' (y = mx + c).",
+            sintaks: `persamaanGaris(titik1, titik2, bentuk = 'umum')`,
+            parameter: [
+              { nama: "titik1, titik2", tipe: "Array | Object", ket: "Dua titik berbeda yang dilalui garis." },
+              { nama: "bentuk", tipe: "'umum' | 'gradien'", ket: "Format persamaan garis yang diinginkan." }
+            ],
+            opsi: [],
+            contohKode: `const umum = persamaanGaris([0, 1], [2, 4], 'umum');
+const eksplisit = persamaanGaris([0, 1], [2, 4], 'gradien');
+console.log("Bentuk umum    :", umum);
+console.log("Bentuk gradien :", eksplisit);
+return umum + " \\\\iff " + eksplisit;`
+          },
+          {
+            id: "titikPotong",
+            nama: "titikPotong()",
+            ringkasan: "Mencari koordinat titik potong antara dua buah garis lurus (masing-masing dinyatakan sebagai pasangan dua titik).",
+            sintaks: `titikPotong(garis1, garis2)`,
+            parameter: [
+              { nama: "garis1, garis2", tipe: "Array<Array|Object>", ket: "Pasangan dua titik untuk garis pertama dan kedua, misal [[x1,y1], [x2,y2]]." }
+            ],
+            opsi: [],
+            contohKode: `const g1 = [[0, 0], [4, 4]];
+const g2 = [[0, 4], [4, 0]];
+const potong = titikPotong(g1, g2);
+console.log("Titik potong:", potong);
+return potong;`
+          },
+          {
+            id: "jarakTitikKeGaris",
+            nama: "jarakTitikKeGaris()",
+            ringkasan: "Menghitung jarak terpendek (tegak lurus) dari sebuah titik ke sebuah garis lurus 2D.",
+            sintaks: `jarakTitikKeGaris(titik, { a, b, c })\njarakTitikKeGaris(titik, [titikGaris1, titikGaris2])`,
+            parameter: [
+              { nama: "titik", tipe: "Array | Object", ket: "Titik [x0, y0]." },
+              { nama: "garis", tipe: "Object | Array", ket: "Objek koefisien {a, b, c} untuk ax+by+c=0, atau pasangan dua titik [[x1,y1],[x2,y2]]." }
+            ],
+            opsi: [],
+            contohKode: `// Jarak titik (0,0) ke garis 3x + 4y - 10 = 0 adalah 2
+const d = jarakTitikKeGaris([0, 0], { a: 3, b: 4, c: -10 });
+console.log("Jarak titik ke garis:", d);
+return d;`
+          },
+          {
+            id: "titikBerat",
+            nama: "titikBerat()",
+            ringkasan: "Mencari koordinat titik berat (centroid) dari segitiga yang dibentuk oleh 3 titik koordinat (2D maupun 3D).",
+            sintaks: `titikBerat(titik1, titik2, titik3)`,
+            parameter: [
+              { nama: "titik1, titik2, titik3", tipe: "Array | Object", ket: "Tiga titik sudut segitiga." }
+            ],
+            opsi: [],
+            contohKode: `const Z = titikBerat([0, 0], [6, 0], [3, 9]);
+console.log("Titik berat segitiga:", Z);
+return Z;`
+          },
+          {
+            id: "lingkaran3Titik",
+            nama: "pusatLingkaran3Titik() & jariLingkaran3Titik()",
+            ringkasan: "Mencari koordinat titik pusat dan panjang jari-jari lingkaran yang melewati 3 titik koordinat (lingkaran luar segitiga).",
+            sintaks: `pusatLingkaran3Titik(t1, t2, t3)\njariLingkaran3Titik(t1, t2, t3)`,
+            parameter: [
+              { nama: "t1, t2, t3", tipe: "Array | Object", ket: "Tiga titik yang tidak segaris (non-kolinier)." }
+            ],
+            opsi: [],
+            contohKode: `const A = [0, 0], B = [6, 0], C = [0, 8];
+const pusat = pusatLingkaran3Titik(A, B, C);
+const r = jariLingkaran3Titik(A, B, C);
+console.log("Pusat:", pusat, "| Jari-jari:", r);
+return { pusat, r };`
+          },
+          {
+            id: "luasPoligon",
+            nama: "luasPoligon() & luasSegitiga()",
+            ringkasan: "Menghitung luas bangun poligon segi-n atau segitiga berdasarkan koordinat titik-titik sudutnya menggunakan Rumus Shoelace (Gauss).",
+            sintaks: `luasPoligon(t1, t2, t3, ...)\nluasSegitiga(t1, t2, t3)`,
+            parameter: [
+              { nama: "...titik", tipe: "Array | Object", ket: "Titik-titik sudut poligon secara berurutan." }
+            ],
+            opsi: [],
+            contohKode: `const lSegitiga = luasSegitiga([0, 0], [4, 0], [0, 3]);
+const lPersegiPanjang = luasPoligon([0, 0], [5, 0], [5, 4], [0, 4]);
+console.log("Luas Segitiga        :", lSegitiga);
+console.log("Luas Persegi Panjang :", lPersegiPanjang);
+return { lSegitiga, lPersegiPanjang };`
+          }
+        ]
+      },
+
+      // =====================================================================
+      // KATEGORI 9: TRANSFORMASI GEOMETRI
+      // =====================================================================
+      {
+        id: "transformasi",
+        judul: "9. Transformasi Geometri",
+        deskripsi: "Fungsi untuk menghitung bayangan titik hasil Translasi (pergeseran), Dilatasi (perkalian skala), Rotasi (perputaran sudut), dan Refleksi (pencerminan).",
+        fungsi: [
+          {
+            id: "translasi",
+            nama: "translasi()",
+            ringkasan: "Menggeser koordinat titik sebesar komponen vektor translasi (dx, dy).",
+            sintaks: `translasi(titik, dx, dy)\ntranslasi(titik, [dx, dy])`,
+            parameter: [
+              { nama: "titik", tipe: "Array | Object", ket: "Titik asal [x, y] atau {x, y}." },
+              { nama: "dx, dy", tipe: "number | Array", ket: "Pergeseran sumbu X dan Y." }
+            ],
+            opsi: [],
+            contohKode: `console.log("translasi([2, 3], 4, -1) ->", translasi([2, 3], 4, -1));
+return translasi([2, 3], 4, -1);`
+          },
+          {
+            id: "dilatasi",
+            nama: "dilatasi()",
+            ringkasan: "Memperbesar atau memperkecil jarak titik dengan faktor skala k terhadap titik pusat tertentu (bawaan: [0, 0]).",
+            sintaks: `dilatasi(titik, k, pusat = [0, 0])`,
+            parameter: [
+              { nama: "titik", tipe: "Array | Object", ket: "Titik yang didilatasikan." },
+              { nama: "k", tipe: "number", ket: "Faktor skala dilatasi." },
+              { nama: "pusat", tipe: "Array | Object", ket: "Titik pusat dilatasi (bawaan: [0, 0])." }
+            ],
+            opsi: [],
+            contohKode: `console.log("Pusat (0,0), k=3 :", dilatasi([2, 4], 3));
+console.log("Pusat (1,1), k=2 :", dilatasi([3, 5], 2, [1, 1]));
+return dilatasi([3, 5], 2, [1, 1]);`
+          },
+          {
+            id: "rotasi",
+            nama: "rotasi()",
+            ringkasan: "Memutar titik sebesar sudut derajat (positif = berlawanan arah jarum jam) terhadap titik pusat tertentu.",
+            sintaks: `rotasi(titik, sudut, pusat = [0, 0])`,
+            parameter: [
+              { nama: "titik", tipe: "Array | Object", ket: "Titik yang akan dirotasikan." },
+              { nama: "sudut", tipe: "number", ket: "Sudut putar dalam derajat." },
+              { nama: "pusat", tipe: "Array | Object", ket: "Titik pusat rotasi (bawaan: [0, 0])." }
+            ],
+            opsi: [],
+            contohKode: `console.log("Rotasi (4, 0) sebesar 90° :", rotasi([4, 0], 90));
+console.log("Rotasi (3, 1) sebesar 180° thd (1, 1):", rotasi([3, 1], 180, [1, 1]));
+return rotasi([4, 0], 90);`
+          },
+          {
+            id: "refleksi",
+            nama: "refleksi()",
+            ringkasan: "Mencerminkan titik terhadap sumbu koordinat, garis y=x, y=-x, titik asal, titik sembarang, garis x=k, y=k, maupun garis miring y=mx+c.",
+            sintaks: `refleksi(titik, cermin)`,
+            parameter: [
+              { nama: "titik", tipe: "Array | Object", ket: "Titik yang akan dicerminkan." },
+              { nama: "cermin", tipe: "string | Array | Object", ket: "'sumbu-x', 'sumbu-y', 'y=x', 'y=-x', 'asal', titik [px,py], atau garis {x: k}, {y: k}, {m, c}." }
+            ],
+            opsi: [],
+            contohKode: `console.log("Terhadap sumbu-x :", refleksi([3, 5], 'sumbu-x'));
+console.log("Terhadap y = x   :", refleksi([3, 5], 'y=x'));
+console.log("Terhadap x = 4   :", refleksi([1, 5], { x: 4 }));
+console.log("Terhadap y=2x+1  :", refleksi([3, 1], { m: 2, c: 1 }));
+return refleksi([1, 5], { x: 4 });`
+          }
+        ]
+      },
+
+      // =====================================================================
+      // KATEGORI 10: KOMBINATORIKA & BARISAN DERET
+      // =====================================================================
+      {
+        id: "kombinatorika-barisan",
+        judul: "10. Kombinatorika, Barisan & Deret",
+        deskripsi: "Fungsi faktorial, penjabaran faktorial LaTeX, permutasi (P), kombinasi (C), serta rumus suku ke-n dan jumlah deret aritmetika & geometri.",
+        fungsi: [
+          {
+            id: "faktorial",
+            nama: "faktorial() & jabarFaktorial()",
+            ringkasan: "faktorial(n) menghitung nilai n!, sedangkan jabarFaktorial(n) menghasilkan string LaTeX penjabaran perkalian n · (n-1) · ... · 1.",
+            sintaks: `faktorial(n)\njabarFaktorial(n)`,
+            parameter: [
+              { nama: "n", tipe: "number", ket: "Bilangan bulat non-negatif." }
+            ],
+            opsi: [],
+            contohKode: `console.log("5! =", faktorial(5));
+console.log("Jabaran 5! =", jabarFaktorial(5));
+return "5! = " + jabarFaktorial(5) + " = " + faktorial(5);`
+          },
+          {
+            id: "kombinasi",
+            nama: "kombinasi() / C()",
+            ringkasan: "Menghitung banyaknya kombinasi r objek dari n objek (nCr) secara iteratif tanpa risiko overflow faktorial.",
+            sintaks: `kombinasi(n, r)\nC(n, r)`,
+            parameter: [
+              { nama: "n", tipe: "number", ket: "Total objek yang tersedia." },
+              { nama: "r", tipe: "number", ket: "Banyak objek yang dipilih." }
+            ],
+            opsi: [],
+            contohKode: `console.log("kombinasi(10, 3) =", kombinasi(10, 3));
+console.log("C(50, 48)        =", C(50, 48));
+return C(10, 3);`
+          },
+          {
+            id: "permutasi",
+            nama: "permutasi() / P()",
+            ringkasan: "Menghitung banyaknya permutasi r objek dari n objek dengan memperhatikan urutan (nPr).",
+            sintaks: `permutasi(n, r)\nP(n, r)`,
+            parameter: [
+              { nama: "n", tipe: "number", ket: "Total objek yang tersedia." },
+              { nama: "r", tipe: "number", ket: "Banyak objek yang disusun." }
+            ],
+            opsi: [],
+            contohKode: `console.log("permutasi(8, 3) =", permutasi(8, 3));
+console.log("P(5, 2)         =", P(5, 2));
+return P(8, 3);`
+          },
+          {
+            id: "barisanAritmetika",
+            nama: "sukuAritmetika() & jumlahAritmetika()",
+            ringkasan: "Menghitung suku ke-n (Un = a + (n-1)b) dan jumlah n suku pertama (Sn) dari barisan/deret aritmetika.",
+            sintaks: `sukuAritmetika(a, b, n)\njumlahAritmetika(a, b, n)`,
+            parameter: [
+              { nama: "a", tipe: "number", ket: "Suku pertama (U1)." },
+              { nama: "b", tipe: "number", ket: "Beda antar suku." },
+              { nama: "n", tipe: "number", ket: "Nomor urut suku (bilangan bulat >= 1)." }
+            ],
+            opsi: [],
+            contohKode: `const U10 = sukuAritmetika(3, 4, 10);
+const S10 = jumlahAritmetika(3, 4, 10);
+console.log("U10 =", U10, "| S10 =", S10);
+return { U10, S10 };`
+          },
+          {
+            id: "barisanGeometri",
+            nama: "sukuGeometri(), jumlahGeometri(), jumlahGeometriTakHingga()",
+            ringkasan: "Menghitung suku ke-n (Un), jumlah n suku pertama (Sn), serta jumlah deret geometri tak hingga konvergen (S∞ = a / (1 - r)).",
+            sintaks: `sukuGeometri(a, r, n)\njumlahGeometri(a, r, n)\njumlahGeometriTakHingga(a, r)`,
+            parameter: [
+              { nama: "a", tipe: "number", ket: "Suku pertama." },
+              { nama: "r", tipe: "number", ket: "Rasio pengali antar suku (untuk tak hingga wajib |r| < 1)." },
+              { nama: "n", tipe: "number", ket: "Banyaknya suku." }
+            ],
+            opsi: [],
+            contohKode: `console.log("U5 (a=2, r=3)        :", sukuGeometri(2, 3, 5));
+console.log("S5 (a=2, r=3)        :", jumlahGeometri(2, 3, 5));
+console.log("S_tak_hingga (8, 0.5):", jumlahGeometriTakHingga(8, 0.5));
+return { U5: sukuGeometri(2, 3, 5), S5: jumlahGeometri(2, 3, 5), StakHingga: jumlahGeometriTakHingga(8, 0.5) };`
+          }
+        ]
+      },
+
+      // =====================================================================
+      // KATEGORI 11: STATISTIKA DATA TUNGGAL
+      // =====================================================================
+      {
+        id: "statistika",
+        judul: "11. Statistika Data Tunggal",
+        deskripsi: "Ukuran pemusatan, letak, dan penyebaran data: mean, median, modus, kuartil (Q1, Q2, Q3), jangkauan, simpangan rata-rata, varians, dan simpangan baku (populasi & sampel).",
+        fungsi: [
+          {
+            id: "mean-median-modus",
+            nama: "mean(), median(), modus()",
+            ringkasan: "Menghitung rata-rata (mean), nilai tengah (median), dan nilai yang paling sering muncul (modus) dari array data angka.",
+            sintaks: `mean(arr)\nmedian(arr)\nmodus(arr)`,
+            parameter: [
+              { nama: "arr", tipe: "Array<number>", ket: "Kumpulan data angka." }
+            ],
+            opsi: [],
+            contohKode: `const data = [70, 80, 75, 90, 80, 85, 70, 80];
+console.log("Mean   :", mean(data));
+console.log("Median :", median(data));
+console.log("Modus  :", modus(data));
+return { mean: mean(data), median: median(data), modus: modus(data) };`
+          },
+          {
+            id: "kuartil",
+            nama: "kuartil()",
+            ringkasan: "Menghitung kuartil bawah (Q1), tengah (Q2), dan atas (Q3) dari data. Mengembalikan objek {q1, q2, q3} atau angka spesifik jika parameter q diisi 1, 2, atau 3.",
+            sintaks: `kuartil(arr)\nkuartil(arr, q)`,
+            parameter: [
+              { nama: "arr", tipe: "Array<number>", ket: "Array data (minimal 2 angka)." },
+              { nama: "q", tipe: "1 | 2 | 3 | undefined", ket: "Nomor kuartil yang ingin diambil (opsional)." }
+            ],
+            opsi: [],
+            contohKode: `const data = [2, 4, 5, 7, 8, 10, 12];
+console.log("Semua Kuartil :", kuartil(data));
+console.log("Kuartil 1 (Q1):", kuartil(data, 1));
+return kuartil(data);`
+          },
+          {
+            id: "jangkauan-kuartil",
+            nama: "jangkauan(), jangkauanInterkuartil(), simpanganKuartil()",
+            ringkasan: "Menghitung jangkauan data (Range), hamparan / jangkauan interkuartil (IQR = Q3 - Q1), dan simpangan kuartil (Qd = ½ IQR).",
+            sintaks: `jangkauan(arr)\njangkauanInterkuartil(arr)\nsimpanganKuartil(arr)`,
+            parameter: [
+              { nama: "arr", tipe: "Array<number>", ket: "Array data angka." }
+            ],
+            opsi: [],
+            contohKode: `const data = [3, 5, 6, 8, 9, 11, 15];
+console.log("Jangkauan (R) :", jangkauan(data));
+console.log("Hamparan (IQR):", jangkauanInterkuartil(data));
+console.log("Simpangan Qd  :", simpanganKuartil(data));
+return { R: jangkauan(data), IQR: jangkauanInterkuartil(data), Qd: simpanganKuartil(data) };`
+          },
+          {
+            id: "simpanganRataRata",
+            nama: "simpanganRataRata()",
+            ringkasan: "Menghitung simpangan rata-rata (SR) dari sekumpulan data tunggal.",
+            sintaks: `simpanganRataRata(arr)`,
+            parameter: [
+              { nama: "arr", tipe: "Array<number>", ket: "Array data angka." }
+            ],
+            opsi: [],
+            contohKode: `const data = [4, 6, 8, 10, 12];
+console.log("Simpangan Rata-rata:", simpanganRataRata(data));
+return simpanganRataRata(data);`
+          },
+          {
+            id: "varians-simpanganBaku",
+            nama: "varians(), simpanganBaku(), variansSampel(), simpanganBakuSampel()",
+            ringkasan: "Menghitung ragam (varians) dan simpangan baku baik untuk data Populasi (pembagi n) maupun data Sampel (pembagi n - 1).",
+            sintaks: `varians(arr)             // Populasi\nsimpanganBaku(arr)       // Populasi\nvariansSampel(arr)       // Sampel\nsimpanganBakuSampel(arr) // Sampel`,
+            parameter: [
+              { nama: "arr", tipe: "Array<number>", ket: "Array data angka." }
+            ],
+            opsi: [],
+            contohKode: `const nilai = [60, 70, 80, 90, 100];
+console.log("Varians Populasi       :", varians(nilai));
+console.log("Simpangan Baku Populasi:", simpanganBaku(nilai));
+console.log("Varians Sampel         :", variansSampel(nilai));
+console.log("Simpangan Baku Sampel  :", simpanganBakuSampel(nilai));
+return { populasi: simpanganBaku(nilai), sampel: simpanganBakuSampel(nilai) };`
+          }
+        ]
+      },
+
+      // =====================================================================
+      // KATEGORI 12: KALKULUS NUMERIK
+      // =====================================================================
+      {
+        id: "kalkulus",
+        judul: "12. Kalkulus Numerik",
+        deskripsi: "Perhitungan turunan pertama f'(x) secara numerik menggunakan metode 5-Point Stencil dan integral tentu menggunakan metode Simpson komposit.",
+        fungsi: [
+          {
+            id: "dfung",
+            nama: "dfung()",
+            ringkasan: "Menghitung nilai turunan pertama f'(x) dari fungsi f pada titik x menggunakan metode Hampiran Beda Hingga 5-Point Stencil berakurasi tinggi O(h⁴).",
+            sintaks: `dfung(f, x, opsi = {})`,
+            parameter: [
+              { nama: "f", tipe: "Function", ket: "Fungsi matematika satu variabel, misal x => x**3." },
+              { nama: "x", tipe: "number", ket: "Titik evaluasi sumbu X." },
+              { nama: "opsi", tipe: "Object", ket: "Opsi ukuran langkah { h }." }
+            ],
+            opsi: [
+              { nama: "h", tipe: "number", bawaan: "dinamis (1e-4)", ket: "Ukuran langkah hampiran." }
+            ],
+            contohKode: `// f(x) = x^3 -> f'(x) = 3x^2. Di x = 2, f'(2) = 12
+const turunan = dfung(x => x ** 3, 2);
+console.log("Turunan x^3 di x = 2 adalah:", turunan);
+return turunan;`
+          },
+          {
+            id: "integral",
+            nama: "integral()",
+            ringkasan: "Menghitung nilai integral tentu fungsi f(x) dari batas bawah a sampai batas atas b menggunakan aturan Simpson komposit.",
+            sintaks: `integral(f, a, b, opsi = {})`,
+            parameter: [
+              { nama: "f", tipe: "Function", ket: "Fungsi yang diintegralkan, misal x => x * x." },
+              { nama: "a, b", tipe: "number", ket: "Batas bawah dan batas atas integrasi." },
+              { nama: "opsi", tipe: "Object", ket: "Opsi jumlah pias subinterval { n: 1000 }." }
+            ],
+            opsi: [
+              { nama: "n", tipe: "number", bawaan: "1000", ket: "Banyaknya subinterval genap pada metode Simpson." }
+            ],
+            contohKode: `// Integral x^2 dx dari 0 sampai 3 adalah [1/3 x^3] = 9
+const luas1 = integral(x => x * x, 0, 3);
+// Integral sin(x) dx dari 0 sampai PI adalah 2
+const luas2 = integral(Math.sin, 0, PI);
+console.log("Integral x^2 [0..3]   :", luas1);
+console.log("Integral sin(x) [0..π]:", luas2);
+return { luas1, luas2 };`
+          }
+        ]
+      },
+
+      // =====================================================================
+      // KATEGORI 13: GENERATOR SOAL, PENGACAKAN & FORMATTER
+      // =====================================================================
+      {
+        id: "generator-soal",
+        judul: "13. Generator Soal, Acak & Formatter",
+        deskripsi: "Perkakas lengkap untuk membuat soal matematika dinamis: pengacakan angka/array/derangement, pemformat aljabar, pilihan ganda otomatis, Rupiah, satuan LaTeX, terbilang, dan tabel soal ber-QR Code.",
+        fungsi: [
+          {
+            id: "acakAntara",
+            nama: "bilBulatAcak(), acakAntara(), acakTanda(), acakMinus()",
+            ringkasan: "Fungsi-fungsi pembangkit angka dan tanda acak untuk membuat variasi soal matematika.",
+            sintaks: `bilBulatAcak(n)          // Bulat acak 0 s.d. n\nacakAntara(min, max)     // Bulat acak min s.d. max (inklusif)\nacakTanda(n = 1)         // Mengembalikan n atau -n (peluang 50:50)\nacakMinus()              // Mengembalikan "-" atau "" (peluang 50:50)`,
+            parameter: [
+              { nama: "min, max / n", tipe: "number", ket: "Batas rentang angka yang diacak." }
+            ],
+            opsi: [],
+            contohKode: `console.log("bilBulatAcak(10)   :", bilBulatAcak(10));
+console.log("acakAntara(-5, 5)  :", acakAntara(-5, 5));
+console.log("acakTanda(7)       :", acakTanda(7));
+console.log("acakMinus() + 'x'  :", acakMinus() + "x");
+return { acak: acakAntara(10, 50), bertanda: acakTanda(12) };`
+          },
+          {
+            id: "deretBilBul",
+            nama: "deretBilBul() & deretTanpaNol()",
+            ringkasan: "Membuat array deret bilangan bulat berurutan dari min ke max (dengan atau tanpa angka 0, sangat berguna untuk bank koefisien soal).",
+            sintaks: `deretBilBul(batasBawah, batasAtas)\nderetTanpaNol(min = -9, max = 9)`,
+            parameter: [
+              { nama: "min, max", tipe: "number", ket: "Batas bawah dan batas atas deret." }
+            ],
+            opsi: [],
+            contohKode: `console.log("deretBilBul(1, 6)    :", deretBilBul(1, 6));
+console.log("deretTanpaNol(-3, 3) :", deretTanpaNol(-3, 3));
+return deretTanpaNol(-3, 3);`
+          },
+          {
+            id: "acakArray",
+            nama: "acakArray(), pilihAcak(), pilihSebagian(), acakDerangement()",
+            ringkasan: "Mengacak urutan array (Fisher-Yates imutabel), mengambil sampel elemen acak, atau mengacak total sehingga tidak ada elemen di posisi awalnya (derangement).",
+            sintaks: `acakArray(arr)\npilihAcak(arr, num = 1)\npilihSebagian(arr, num = 1)\nacakDerangement(arr)`,
+            parameter: [
+              { nama: "arr", tipe: "Array", ket: "Array sumber (tidak akan dirusak/dimutasi)." },
+              { nama: "num", tipe: "number", ket: "Jumlah elemen yang ingin diambil." }
+            ],
+            opsi: [],
+            contohKode: `const kartu = ["A", "B", "C", "D", "E"];
+console.log("acakArray       :", acakArray(kartu));
+console.log("pilihAcak (3)   :", pilihAcak(kartu, 3));
+console.log("pilihSebagian(3):", pilihSebagian(kartu, 3));
+console.log("acakDerangement :", acakDerangement(kartu));
+return acakDerangement(kartu);`
+          },
+          {
+            id: "arrayBukitLembah",
+            nama: "arrayBukit() & arrayLembah()",
+            ringkasan: "Membuat array bilangan bulat positif dengan formasi 'Bukit' (naik lalu turun) atau 'Lembah' (turun lalu naik) yang total jumlah seluruh elemennya dijamin tepat sama dengan parameter jumlah.",
+            sintaks: `arrayBukit(banyakBilangan, jumlah)\narrayLembah(banyakBilangan, jumlah)`,
+            parameter: [
+              { nama: "banyakBilangan", tipe: "number", ket: "Banyak elemen dalam array." },
+              { nama: "jumlah", tipe: "number", ket: "Target total penjumlahan seluruh elemen." }
+            ],
+            opsi: [],
+            contohKode: `const bukit = arrayBukit(7, 35);
+const lembah = arrayLembah(7, 35);
+console.log("Formasi Bukit (Total 35) :", bukit);
+console.log("Formasi Lembah (Total 35):", lembah);
+return { bukit, lembah };`
+          },
+          {
+            id: "formatAljabar",
+            nama: "koefisien(), formatSuku(), formatKonstanta(), kurungNegatif()",
+            ringkasan: "Memformat tampilan koefisien dan konstanta agar menghasilkan penulisan kalimat aljabar yang alami (menyembunyikan angka 1/-1 atau suku 0).",
+            sintaks: `koefisien(n)       // 1 -> "", -1 -> "-", 3 -> "3"\nformatSuku(n)      // 1 -> "+ ", -1 -> "- ", -3 -> "- 3", 0 -> ""\nformatKonstanta(n) // 5 -> "+5", -5 -> "-5", 0 -> ""\nkurungNegatif(n)   // -4 -> "(-4)", 4 -> "4"`,
+            parameter: [
+              { nama: "n", tipe: "number", ket: "Angka koefisien atau konstanta." }
+            ],
+            opsi: [],
+            contohKode: `const a = -1, b = 3, c = -7;
+const pers = \`\${koefisien(a)}x^2 \${formatSuku(b)}x \${formatKonstanta(c)} = 0\`;
+console.log("Persamaan terformat:", pers);
+console.log("Substitusi x = -4  :", \`2 \${kurungNegatif(-4)} + 5\`);
+return pers;`
+          },
+          {
+            id: "buatOpsiGanda",
+            nama: "buatOpsiGanda()",
+            ringkasan: "Menghasilkan daftar opsi pilihan ganda (A, B, C, D, E, dst.) lengkap dengan pengecoh (distraktor) unik yang simetris di sekitar jawaban benar.",
+            sintaks: `buatOpsiGanda(jawabanBenar, toleransi = 1, jumlahOpsi = 5, opsi = {})`,
+            parameter: [
+              { nama: "jawabanBenar", tipe: "number", ket: "Nilai jawaban yang benar." },
+              { nama: "toleransi", tipe: "number", ket: "Jarak selisih antar pengecoh (bawaan: 1)." },
+              { nama: "jumlahOpsi", tipe: "number", ket: "Banyaknya pilihan ganda (bawaan: 5 untuk A-E)." },
+              { nama: "opsi", tipe: "Object", ket: "Pengaturan tambahan { tidakNegatif: true, desimal: n }." }
+            ],
+            opsi: [
+              { nama: "tidakNegatif", tipe: "boolean", bawaan: "false", ket: "Mencegah munculnya opsi pengecoh bernilai negatif." },
+              { nama: "desimal", tipe: "number", bawaan: "undefined", ket: "Membulatkan nilai opsi ke n digit desimal." }
+            ],
+            contohKode: `const pilihan = buatOpsiGanda(25, 5, 5, { tidakNegatif: true });
+pilihan.forEach(p => {
+  console.log(\`\${p.opsi}. \${p.nilai} \${p.isBenar ? '(KUNCI)' : ''}\`);
+});
+return pilihan;`
+          },
+          {
+            id: "formatterIndonesia",
+            nama: "formatRibuan(), formatRupiah(), formatSatuan(), terbilang()",
+            ringkasan: "Memformat angka ke standar ribuan Indonesia, mata uang Rupiah (EYD), satuan berpangkat siap LaTeX, serta mengeja angka menjadi kalimat bahasa Indonesia (terbilang).",
+            sintaks: `formatRibuan(angka)\nformatRupiah(angka)\nformatSatuan(angka, satuan)\nterbilang(angka)`,
+            parameter: [
+              { nama: "angka", tipe: "number", ket: "Angka yang akan diformat atau dieja." },
+              { nama: "satuan", tipe: "string", ket: "String satuan, misal 'cm2' atau 'm3' (otomatis diubah menjadi pangkat LaTeX)." }
+            ],
+            opsi: [],
+            contohKode: `console.log("Ribuan   :", formatRibuan(1250000.75));
+console.log("Rupiah   :", formatRupiah(150000));
+console.log("Satuan   :", formatSatuan(1250, "cm3"));
+console.log("Terbilang:", terbilang(2026));
+return formatSatuan(1250, "cm3");`
+          },
+          {
+            id: "buattabelsoal",
+            nama: "buattabelsoal()",
+            ringkasan: "Merender array pasangan [soal, kodeSolusi] menjadi tabel HTML lengkap dengan QR Code otomatis menuju tautan pembahasan singkat.",
+            sintaks: `buattabelsoal(arr, tempattabel, opsi = {})`,
+            parameter: [
+              { nama: "arr", tipe: "Array<[string, string]>", ket: "Array 2D berisi pasangan [teksSoal, kodeTautanSolusi]." },
+              { nama: "tempattabel", tipe: "string", ket: "ID elemen HTML tempat tabel akan ditampilkan." },
+              { nama: "opsi", tipe: "Object", ket: "Pengaturan ukuran & warna QR Code { lebarqr, tinggiqr, warnaqr }." }
+            ],
+            opsi: [
+              { nama: "lebarqr, tinggiqr", tipe: "number", bawaan: "100", ket: "Lebar dan tinggi QR Code dalam piksel." },
+              { nama: "warnaqr", tipe: "string", bawaan: "'#000000'", ket: "Warna modul gelap QR Code." }
+            ],
+            contohKode: `// Buat div wadah di dalam area preview:
+container.innerHTML = '<div id="wadah-tabel-demo"></div>';
+
+const daftarSoal = [
+  ["Tentukan nilai dari FPB(24, 36) = ...", "solusi-fpb1"],
+  ["Hitunglah hasil dari sin(30°) + cos(60°) = ...", "solusi-trigo2"]
+];
+
+buattabelsoal(daftarSoal, "wadah-tabel-demo", {
+  lebarqr: 65,
+  tinggiqr: 65,
+  warnaqr: "#1d4ed8"
+});
+return "Tabel soal beserta QR Code berhasil dirender di atas!";`
+          }
+        ]
+      }
+    ];
+
+    // =========================================================================
+    // LOGIKA APLIKASI DOKUMENTASI (NAVIGASI, PENCARIAN, & LIVE RUNNER)
+    // =========================================================================
+    const sidebar = document.getElementById('sidebar');
+    const sidebarNav = document.getElementById('sidebarNav');
+    const mainContent = document.getElementById('mainContent');
+    const searchInput = document.getElementById('searchInput');
+    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+
+    mobileMenuBtn.addEventListener('click', () => {
+      sidebar.classList.toggle('open');
+    });
+
+    function dapatkanSemuaRute() {
+      const urut = [];
+      DOCS_DATA.forEach(kat => {
+        (kat.halamanKhusus || []).forEach(h => {
+          urut.push({ route: h.id, label: h.nama });
+        });
+        if ((kat.fungsi || []).length > 0) {
+          urut.push({ route: `kategori/${kat.id}`, label: `Kategori: ${kat.judul}` });
+        }
+        (kat.fungsi || []).forEach(f => {
+          urut.push({ route: `fungsi/${f.id}`, label: f.nama });
+        });
+      });
+      return urut;
+    }
+
+    function renderSidebar(filter = '') {
+      const q = filter.trim().toLowerCase();
+      let html = '';
+
+      DOCS_DATA.forEach(kat => {
+        const halamanKhususCocok = (kat.halamanKhusus || []).filter(h =>
+          h.nama.toLowerCase().includes(q)
+        );
+        const fungsiCocok = (kat.fungsi || []).filter(f =>
+          f.nama.toLowerCase().includes(q) || f.ringkasan.toLowerCase().includes(q)
+        );
+
+        const kategoriCocok = kat.judul.toLowerCase().includes(q);
+        if (q && !kategoriCocok && halamanKhususCocok.length === 0 && fungsiCocok.length === 0) {
+          return;
+        }
+
+        const daftarFungsiTampil = kategoriCocok ? (kat.fungsi || []) : fungsiCocok;
+        const daftarKhususTampil = kategoriCocok ? (kat.halamanKhusus || []) : halamanKhususCocok;
+
+        const targetCatHref = (kat.fungsi && kat.fungsi.length > 0) ? `#kategori/${kat.id}` : `#pengenalan`;
+        const targetCatRoute = (kat.fungsi && kat.fungsi.length > 0) ? `kategori/${kat.id}` : `pengenalan`;
+
+        html += `
+          <div class="nav-group">
+            <a href="${targetCatHref}" class="nav-cat-link" data-route="${targetCatRoute}">
+              <span>${kat.judul}</span>
+              ${(kat.fungsi || []).length > 0 ? `<span class="cat-count">${kat.fungsi.length}</span>` : ''}
+            </a>
+            <ul class="nav-items">
+        `;
+
+        daftarKhususTampil.forEach(h => {
+          html += `<li class="nav-item"><a href="#${h.id}" class="text-link" data-route="${h.id}">📖 ${h.nama}</a></li>`;
+        });
+
+        daftarFungsiTampil.forEach(f => {
+          html += `<li class="nav-item"><a href="#fungsi/${f.id}" data-route="fungsi/${f.id}">${f.nama}</a></li>`;
+        });
+
+        html += `</ul></div>`;
+      });
+
+      sidebarNav.innerHTML = html || `<p style="padding:0.5rem;font-size:0.85rem;">Tidak ada fungsi yang cocok.</p>`;
+      tandaiMenuAktif();
+    }
+
+    function tandaiMenuAktif() {
+      const hash = location.hash.slice(1) || 'pengenalan';
+      document.querySelectorAll('.sidebar a[data-route]').forEach(a => {
+        a.classList.toggle('active', a.getAttribute('data-route') === hash);
+      });
+    }
+
+    function buatNavigasiBawah(currentRoute) {
+      const semua = dapatkanSemuaRute();
+      const idx = semua.findIndex(r => r.route === currentRoute);
+      if (idx === -1) return '';
+
+      const prev = idx > 0 ? semua[idx - 1] : null;
+      const next = idx < semua.length - 1 ? semua[idx + 1] : null;
+
+      return `
+        <div class="page-nav">
+          ${prev ? `<a href="#${prev.route}"><span>← Sebelumnya</span><strong>${prev.label}</strong></a>` : `<div></div>`}
+          ${next ? `<a href="#${next.route}" style="text-align:right;"><span>Berikutnya →</span><strong>${next.label}</strong></a>` : `<div></div>`}
+        </div>
+      `;
+    }
+
+    function renderHalaman() {
+      const hash = location.hash.slice(1) || 'pengenalan';
+      sidebar.classList.remove('open');
+      tandaiMenuAktif();
+
+      // 1. Cek Halaman Khusus
+      for (const kat of DOCS_DATA) {
+        for (const h of (kat.halamanKhusus || [])) {
+          if (h.id === hash) {
+            mainContent.innerHTML = h.kontenHTML + buatNavigasiBawah(hash);
+            window.scrollTo(0, 0);
+            return;
+          }
+        }
+      }
+
+      // 2. Cek Halaman Kategori (#kategori/...)
+      if (hash.startsWith('kategori/')) {
+        const katId = hash.split('/')[1];
+        const kat = DOCS_DATA.find(k => k.id === katId);
+        if (kat) {
+          const fnCards = (kat.fungsi || []).map(f => `
+            <a href="#fungsi/${f.id}" class="fn-card">
+              <div>
+                <h3>${f.nama}</h3>
+                <p>${f.ringkasan}</p>
+              </div>
+            </a>
+          `).join('');
+
+          mainContent.innerHTML = `
+            <a href="#pengenalan" class="breadcrumb">📚 Dokumentasi matematikin.js (v0.0.1 beta)</a>
+            <h1>${kat.judul}</h1>
+            <p class="lead">${kat.deskripsi}</p>
+
+            <h2>Daftar Topik & Fungsi (${(kat.fungsi || []).length} Entri)</h2>
+            <div class="card-grid">
+              ${fnCards}
+            </div>
+            ${buatNavigasiBawah(hash)}
+          `;
+          window.scrollTo(0, 0);
+          return;
+        }
+      }
+
+      // 3. Cek Halaman Detail Fungsi (#fungsi/...)
+      if (hash.startsWith('fungsi/')) {
+        const fnId = hash.split('/')[1];
+        for (const kat of DOCS_DATA) {
+          const fn = (kat.fungsi || []).find(f => f.id === fnId);
+          if (fn) {
+            tampilkanHalamanFungsi(kat, fn, hash);
+            window.scrollTo(0, 0);
+            return;
+          }
+        }
+      }
+
+      location.hash = '#pengenalan';
+    }
+
+    function tampilkanHalamanFungsi(kat, fn, hash) {
+      const barisParam = (fn.parameter && fn.parameter.length > 0)
+        ? fn.parameter.map(p => `
+            <tr>
+              <td><code>${p.nama}</code></td>
+              <td><code>${p.tipe}</code></td>
+              <td>${p.ket}</td>
+            </tr>
+          `).join('')
+        : `<tr><td colspan="3" style="color:var(--text-muted);">Konstanta atau fungsi ini dapat dipanggil tanpa parameter wajib.</td></tr>`;
+
+      const bagianOpsi = (fn.opsi && fn.opsi.length > 0)
+        ? `
+          <h2>Opsi Konfigurasi (<code>opsi</code>)</h2>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr><th>Nama Opsi</th><th>Tipe</th><th>Nilai Bawaan</th><th>Keterangan</th></tr>
+              </thead>
+              <tbody>
+                ${fn.opsi.map(o => `
+                  <tr>
+                    <td><code>${o.nama}</code></td>
+                    <td><code>${o.tipe}</code></td>
+                    <td><code>${o.bawaan}</code></td>
+                    <td>${o.ket}</td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+        `
+        : '';
+
+      mainContent.innerHTML = `
+        <a href="#kategori/${kat.id}" class="breadcrumb">← Kategori: ${kat.judul}</a>
+        <h1><code>${fn.nama}</code></h1>
+        <p class="lead">${fn.ringkasan}</p>
+
+        <h2>Format Kode (Sintaks)</h2>
+        <pre><code>${fn.sintaks}</code></pre>
+
+        <h2>Parameter</h2>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Parameter</th><th>Tipe</th><th>Keterangan</th></tr>
+            </thead>
+            <tbody>${barisParam}</tbody>
+          </table>
+        </div>
+
+        ${bagianOpsi}
+
+        <h2>Contoh & Uji Coba Interaktif (Live Runner)</h2>
+        <p>Anda dapat mengubah angka atau parameter di sebelah kiri lalu menekan <strong>▶ Jalankan Kode</strong> untuk menguji hasilnya secara langsung:</p>
+        <div class="demo-container">
+          <div class="code-editor-panel">
+            <div class="panel-toolbar">
+              <span>KODE CONTOH JAVASCRIPT</span>
+              <div class="toolbar-actions">
+                <button class="btn-small" id="btnCopyCode">Salin Kode</button>
+                <button class="btn-small" id="btnResetCode">Reset</button>
+                <button class="btn-small primary" id="btnRunCode">▶ Jalankan Kode</button>
+              </div>
+            </div>
+            <textarea id="liveCodeEditor" class="code-textarea" spellcheck="false"></textarea>
+          </div>
+
+          <div class="preview-panel">
+            <div class="preview-header">
+              <span>HASIL EKSEKUSI & PRATINJAU LATEX</span>
+            </div>
+            <div class="preview-canvas">
+              <div id="livePreviewContainer" style="width:100%;"></div>
+              <div id="liveLatexBox" class="latex-preview-box" style="display:none;">
+                <span class="latex-preview-label">Pratinjau Rumus LaTeX (KaTeX)</span>
+                <div id="liveLatexContent"></div>
+              </div>
+              <div id="liveConsoleOutput" class="console-output"></div>
+            </div>
+          </div>
+        </div>
+
+        ${buatNavigasiBawah(hash)}
+      `;
+
+      const editor = document.getElementById('liveCodeEditor');
+      const previewContainer = document.getElementById('livePreviewContainer');
+      const consoleBox = document.getElementById('liveConsoleOutput');
+      const latexBox = document.getElementById('liveLatexBox');
+      const latexContent = document.getElementById('liveLatexContent');
+      editor.value = fn.contohKode;
+
+      function formatNilaiLog(v) {
+        if (typeof v === 'string') return v;
+        try { return JSON.stringify(v); } catch (e) { return String(v); }
+      }
+
+      function jalankanKode() {
+        previewContainer.innerHTML = '';
+        latexBox.style.display = 'none';
+        consoleBox.style.color = '#38bdf8';
+        const barisLog = [];
+
+        const customConsole = {
+          log: (...args) => barisLog.push(args.map(formatNilaiLog).join(' ')),
+          warn: (...args) => barisLog.push('⚠️ ' + args.map(formatNilaiLog).join(' ')),
+          error: (...args) => barisLog.push('❌ ' + args.map(formatNilaiLog).join(' '))
+        };
+
+        try {
+          const runner = new Function('container', 'console', editor.value);
+          const hasilReturn = runner(previewContainer, customConsole);
+
+          if (hasilReturn !== undefined) {
+            barisLog.push('\n💡 Nilai Return: ' + formatNilaiLog(hasilReturn));
+
+            // Jika hasilReturn berupa string yang mengandung sintaks LaTeX atau persamaan matematika, render dengan KaTeX
+            if (typeof hasilReturn === 'string' && (hasilReturn.includes('\\') || hasilReturn.includes('^') || hasilReturn.includes('='))) {
+              if (window.katex) {
+                latexBox.style.display = 'block';
+                window.katex.render(hasilReturn, latexContent, { displayMode: true, throwOnError: false });
+              }
+            }
+          }
+
+          consoleBox.textContent = barisLog.join('\n') || '✓ Kode berhasil dijalankan.';
+        } catch (err) {
+          consoleBox.style.color = '#f87171';
+          consoleBox.textContent = '⚠️ Error: ' + err.message;
+        }
+      }
+
+      document.getElementById('btnRunCode').addEventListener('click', jalankanKode);
+      document.getElementById('btnResetCode').addEventListener('click', () => {
+        editor.value = fn.contohKode;
+        jalankanKode();
+      });
+      document.getElementById('btnCopyCode').addEventListener('click', (e) => {
+        navigator.clipboard.writeText(editor.value);
+        e.target.textContent = '✓ Tersalin!';
+        setTimeout(() => { e.target.textContent = 'Salin Kode'; }, 1500);
+      });
+
+      jalankanKode();
+    }
+
+    searchInput.addEventListener('input', e => renderSidebar(e.target.value));
+    window.addEventListener('hashchange', renderHalaman);
+
+    // Inisialisasi saat halaman pertama kali dibuka
+    renderSidebar();
+    renderHalaman();
+  </script>
+</body>
+
+</html>
